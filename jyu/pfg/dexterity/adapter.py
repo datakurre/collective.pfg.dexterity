@@ -86,8 +86,8 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
             description=_((u"Map form fields to fields of the selected "
                            u"content type. Please note, that you must "
                            u"first select the content type, then save "
-                           u"this adapter, and only then you'll be be "
-                           u"shown the fields of the selected content "
+                           u"this adapter, and only then you'll be able "
+                           u"to see the fields of the selected content "
                            u"type.")),
             columns={
                 'form': SelectColumn(
@@ -141,45 +141,61 @@ class DexterityContentAdapter(FormActionAdapter):
     
     portal_type = 'Dexterity Content Adapter'
     schema = DexterityContentAdapterSchema
-
+    
     _at_rename_after_creation = True
     
     title = atapi.ATFieldProperty('title')
     description = atapi.ATFieldProperty('description')
-
+    
     createdType = atapi.ATFieldProperty('createdType')
     targetFolder = atapi.ATFieldProperty('targetFolder')
     fieldMapping = atapi.ATFieldProperty('fieldMapping')
     workflowTransition = atapi.ATFieldProperty('workflowTransition')
-
+    
     @unrestricted
     def onSuccess(self, fields, REQUEST=None):
         createdType = self.getCreatedType()
         targetFolder = self.getTargetFolder()
         fieldMapping = self.getFieldMapping()
         workflowTransition = self.getWorkflowTransition()
-
+        
         try:
             context = createContentInContainer(
                 targetFolder, createdType)
         except Exception, e:
             LOG.error(e)
             return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
-
-        import pdb; pdb.set_trace()
-
+        
+        for mapping in fieldMapping:
+            value = REQUEST.get(mapping["form"], None)
+            field = self._getDexterityField(createdType, mapping["content"])
+            field.bind(context)
+            try:
+                field.set(context, value)
+            except:
+                print mapping, field, value
+                import pdb; pdb.set_trace()
+    
     def listTypes(self):
         types = getToolByName(self, "portal_types")
         dexterity = [(fti.id, fti.title) for fti in types.values()
                      if IDexterityFTI.providedBy(fti)]
         return atapi.DisplayList(dexterity)
-
+    
     def listFormFields(self):
         fields = [(obj.getId(), obj.title_or_id())
                   for obj in self.aq_parent.objectValues()\
                           if IPloneFormGenField.providedBy(obj)]
         return atapi.DisplayList(fields)
-
+    
+    def _getDexterityField(self, portal_type, name):
+        schemas = (SCHEMA_CACHE.get(portal_type),)\
+            + SCHEMA_CACHE.subtypes(portal_type)
+        for schema in schemas:
+            if name in schema:
+                return schema[name]
+        return None
+    
     def _getDexterityFields(self, portal_type):
         fields = {}
         schemas = (SCHEMA_CACHE.get(portal_type),)\
@@ -190,7 +206,7 @@ class DexterityContentAdapter(FormActionAdapter):
         
         return [(key, fields[key]) for key in sorted(
             fields, lambda x,y: cmp(fields[x].lower(), fields[y].lower()))]
-
+    
     def listContentFields(self):
         types = getToolByName(self, "portal_types")
         createdType = self.getCreatedType()
@@ -199,7 +215,7 @@ class DexterityContentAdapter(FormActionAdapter):
         else:
             fields = []
         return atapi.DisplayList(fields)
-
+    
     def listTransitions(self):
         types = getToolByName(self, "portal_types")
         createdType = self.getCreatedType()
