@@ -6,6 +6,7 @@ from jyu.pfg.dexterity import config
 from Products.Archetypes import atapi
 from Products.CMFCore import utils
 
+
 def initialize(context):
     """Initializer called when used as a Zope 2 product.
 

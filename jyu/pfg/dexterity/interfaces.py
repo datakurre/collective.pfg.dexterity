@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """Interfaces"""
-from zope import interface
 
-class IDexterityContentAdapter(interface.Interface):
+from zope.interface import Interface
+
+
+class IDexterityContentAdapter(Interface):
     """Dexterity content creation adapter for PloneFormGen."""
     
     ### See: adapter.py for Archetype-schema

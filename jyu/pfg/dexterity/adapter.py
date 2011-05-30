@@ -4,6 +4,7 @@
 import logging
 
 from zope.component import getUtility
+from zope.schema import TextLine, List
 from zope.schema.interfaces import IVocabularyFactory
 
 from zope.interface import implements
@@ -34,6 +35,9 @@ from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.schema import SCHEMA_CACHE
 from plone.dexterity.utils import createContentInContainer
 
+from plone.namedfile.interfaces import INamedFileField, INamedImageField
+from plone.formwidget.namedfile.converter import NamedDataConverter
+
 from jyu.pfg.dexterity.interfaces import IDexterityContentAdapter
 from jyu.pfg.dexterity.config import PROJECTNAME
 
@@ -41,7 +45,7 @@ from zope.i18nmessageid import MessageFactory as ZopeMessageFactory
 _ = ZopeMessageFactory("jyu.pfg.dexterity")
 
 LOG = logging.getLogger("jyu.pfg.dexterity")
-
+FILE_FIELDS = (INamedFileField, INamedImageField)
 
 DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
     atapi.StringField(
@@ -111,6 +115,40 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
                            u"triggered after new content is created."))
         ),
     ),
+    ### FIXME: I've been thinking about enhancing this adapter to be able
+    ### to 1) first create a container and 2) then add file types into that
+    ### container. Although, this has been delayed, since I'm not yet
+    ### convinced, if that's really a good idea.
+    # 
+    # atapi.StringField(
+    #     'containedType',
+    #     required=False,
+    #     storage=atapi.AnnotationStorage(),
+    #     searchable=False,
+    #     vocabulary='listNamedfileTypes',
+    #     widget=SelectionWidget(
+    #         label=_(u"Attachment Content type"),
+    #         description=_((u"When the selected content type to be created "
+    #                        u"is a container type and the form contains file "
+    #                        u"fields, you may select a separate type for "
+    #                        u"adding those files inside the container."))
+    #     ),
+    # ),
+    # atapi.StringField(
+    #     'containedWorkflowTransition',
+    #     required=False,
+    #     storage=atapi.AnnotationStorage(),
+    #     searchable=False,
+    #     vocabulary='listNamedfileTransitions',
+    #     widget=SelectionWidget(
+    #         label=_(u"Trigger attachment's workflow transition"),
+    #         description=_((u"You may select a workflow transition to be "
+    #                        u"triggered after new file is added into the"
+    #                        u"container. The selected transition will be "
+    #                        u"triggered only after the selected transition "
+    #                        u"for the container has been triggered."))
+    #     ),
+    # ),
 ))
 finalizeATCTSchema(DexterityContentAdapterSchema)
 
@@ -152,6 +190,14 @@ class DexterityContentAdapter(FormActionAdapter):
     fieldMapping = atapi.ATFieldProperty('fieldMapping')
     workflowTransition = atapi.ATFieldProperty('workflowTransition')
     
+    @property
+    def default_encoding(self):
+        ptool = getToolByName(self, "portal_properties")
+        try:
+            return ptool.get("site_properties").default_charset
+        except:
+            return "utf-8"
+    
     @unrestricted
     def onSuccess(self, fields, REQUEST=None):
         createdType = self.getCreatedType()
@@ -160,21 +206,63 @@ class DexterityContentAdapter(FormActionAdapter):
         workflowTransition = self.getWorkflowTransition()
         
         try:
+            # README: id for new content will be choosed by
+            # INameChooser(container).chooseName(None, object),
+            # so you should provide e.g. INameFromTitle adapter
+            # to generate a custom id
             context = createContentInContainer(
-                targetFolder, createdType)
+                targetFolder, createdType, checkConstraints=True)
         except Exception, e:
             LOG.error(e)
             return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
         
         for mapping in fieldMapping:
-            value = REQUEST.get(mapping["form"], None)
             field = self._getDexterityField(createdType, mapping["content"])
             field.bind(context)
+
+            if True in [i.providedBy(field) for i in FILE_FIELDS]:
+                # Here we use NamedFile's data converter adapter... 
+                upload = REQUEST.get("%s_file" % mapping["form"], None)
+                value = NamedDataConverter(field, None).toFieldValue(upload)
+            else:
+                value = REQUEST.get(mapping["form"], None)
+                # Convert strings to unicode
+                if isinstance(value, str):
+                    value = unicode(value, self.default_encoding,
+                                    errors="ignore")
+
+            # Here we apply a few convenience heuristic
+            if isinstance(field, TextLine):
+                # 1) Multiple text lines into the same field
+                try:
+                    old_value = field.get(context)
+                except AttributeError:
+                    old_value = None
+                if old_value and value:
+                    value = u" ".join((old_value, value))
+            if isinstance(field, List) and isinstance(value, unicode):
+                # 2) Split keyword (just a guess) string into list
+                value = value.replace(u",", u"\n")
+                value = [s.strip() for s in value.split(u"\n") if s]
+
             try:
                 field.set(context, value)
-            except:
-                print mapping, field, value
-                import pdb; pdb.set_trace()
+            except Exception, e:
+                LOG.error(e)
+                # Setting value falied, remove incomplete submission
+                targetFolder.manage_delObjects([context.getId()])
+                return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
+
+        # context.reindexObjectSecurity()
+        context.reindexObject()
+
+        wftool = getToolByName(self, "portal_workflow")
+        try:
+            wftool.doActionFor(context, workflowTransition)
+        except Exception, e:
+            # Transition failed, remove incomplete submission
+            targetFolder.manage_delObjects([context.getId()])
+            return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
     
     def listTypes(self):
         types = getToolByName(self, "portal_types")
