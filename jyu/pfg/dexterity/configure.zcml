@@ -4,26 +4,18 @@
    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
    i18n_domain="jyu.pfg.dexterity">
 
-  <includeDependencies package="."/>    
+  <includeDependencies package="."/>
   <five:registerPackage package="." initialize=".initialize" />
 
-  <class class=".adapter.DexterityContentAdapter">
-    <require
-      permission="zope2.View"
-      interface=".interfaces.IDexterityContentAdapter"
-      />
-    <require
-      permission="cmf.ModifyPortalContent"
-      set_schema=".interfaces.IDexterityContentAdapter"
-      />
-  </class>
+  <i18n:registerTranslations directory="locales"/>
 
   <genericsetup:registerProfile
      name="default"
      title="Dexterity PloneFromGen Adapter"
      directory="profiles/default"
-     description="Dexterity content creation adapter for PloneFormGen."
+     description="Installs dexterity content creation adapter for PloneFormGen."
      provides="Products.GenericSetup.interfaces.EXTENSION"
      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
      />
+
 </configure>

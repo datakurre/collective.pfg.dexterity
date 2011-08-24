@@ -5,6 +5,6 @@ from zope.interface import Interface
 
 
 class IDexterityContentAdapter(Interface):
-    """Dexterity content creation adapter for PloneFormGen."""
-    
+    """Dexterity content creation adapter for PloneFormGen"""
+
     ### See: adapter.py for Archetype-schema

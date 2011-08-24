@@ -1,0 +1,68 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2011-08-24 16:24+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: DOMAIN\n"
+
+#: jyu/pfg/dexterity/profiles/default/types/Dexterity_Content_Adapter.xml
+msgid "Content Adapter"
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:60
+msgid "Content type"
+msgstr ""
+
+#: jyu/pfg/dexterity/profiles/default/types/Dexterity_Content_Adapter.xml
+msgid "Dexterity content creation adapter for PloneFormGen."
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:91
+msgid "Field mapping"
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:92
+msgid "Map form fields to fields of the selected content type. Please note, that you must first select the content type, then save this adapter, and only then you'll be able to see the fields of the selected content type."
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:331
+msgid "No transition"
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:100
+msgid "Select a form field"
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:71
+msgid "Select the target folder, where created new content should be placed. Please, make sure that the folder allows adding content of the selected type."
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:61
+msgid "Select the type of new content to be created."
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:70
+msgid "Target folder"
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:115
+msgid "Trigger workflow transition"
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:116
+msgid "You may select a workflow transition to be triggered after new content is created."
+msgstr ""
+
+#: jyu/pfg/dexterity/adapter.py:103
+msgid "to be mapped to a content field."
+msgstr ""
+

@@ -16,4 +16,4 @@ fake-eggs
 .installed.cfg
 .project
 .pydevproject
-
+.DS_Store
