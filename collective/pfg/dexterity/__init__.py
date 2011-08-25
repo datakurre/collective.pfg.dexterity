@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Initialize Archetypes"""
 
-from jyu.pfg.dexterity import config
+from collective.pfg.dexterity import config
 
 from Products.Archetypes import atapi
 from Products.CMFCore import utils

@@ -39,13 +39,13 @@ from plone.dexterity.utils import createContentInContainer
 from plone.namedfile.interfaces import INamedFileField, INamedImageField
 from plone.formwidget.namedfile.converter import NamedDataConverter
 
-from jyu.pfg.dexterity.interfaces import IDexterityContentAdapter
-from jyu.pfg.dexterity.config import PROJECTNAME
+from collective.pfg.dexterity.interfaces import IDexterityContentAdapter
+from collective.pfg.dexterity.config import PROJECTNAME
 
 from zope.i18nmessageid import MessageFactory as ZopeMessageFactory
-_ = ZopeMessageFactory("jyu.pfg.dexterity")
+_ = ZopeMessageFactory("collective.pfg.dexterity")
 
-LOG = logging.getLogger("jyu.pfg.dexterity")
+LOG = logging.getLogger("collective.pfg.dexterity")
 FILE_FIELDS = (INamedFileField, INamedImageField)
 
 

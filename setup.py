@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""jyu.pfg.dexterity"""
+"""collective.pfg.dexterity"""
 from setuptools import setup, find_packages
 
 version = "1.0"
 
-setup(name="jyu.pfg.dexterity",
+setup(name="collective.pfg.dexterity",
       version=version,
       description="Installs dexterity content creation adapter for PloneFormGen.",
       long_description=open("README.txt").read() + "\n" +
@@ -18,9 +18,9 @@ setup(name="jyu.pfg.dexterity",
       author="Asko Soukka",
       author_email="asko.soukka@iki.fi",
       url="",
-      license="GPL",
+      license="ZPL",
       packages=find_packages(exclude=["ez_setup"]),
-      namespace_packages=["jyu", "jyu.pfg"],
+      namespace_packages=["collective", "collective.pfg"],
       include_package_data=True,
       zip_safe=False,
       install_requires=[

@@ -2,7 +2,7 @@
    xmlns="http://namespaces.zope.org/zope"
    xmlns:five="http://namespaces.zope.org/five"
    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-   i18n_domain="jyu.pfg.dexterity">
+   i18n_domain="collective.pfg.dexterity">
 
   <includeDependencies package="."/>
   <five:registerPackage package="." initialize=".initialize" />

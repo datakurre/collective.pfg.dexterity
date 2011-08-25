@@ -2,14 +2,14 @@
 <object name="Dexterity Content Adapter"
         meta_type="Factory-based Type Information with dynamic views"
         xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-        i18n:domain="jyu.pfg.dexterity">
+        i18n:domain="collective.pfg.dexterity">
   
   <property name="title" i18n:translate="">Content Adapter</property>
   <property name="description" i18n:translate="">Dexterity content creation adapter for PloneFormGen.</property>
   <property name="content_icon">FormAction.gif</property>
   <!-- See: http://dev.plone.org/plone/ticket/8161 -->
   <property name="content_meta_type">DexterityContentAdapter</property>
-  <property name="product">jyu.pfg.dexterity</property>
+  <property name="product">collective.pfg.dexterity</property>
   <property name="factory">addDexterityContentAdapter</property>
   <property name="immediate_view">atct_edit</property>
   <property name="global_allow">False</property>
