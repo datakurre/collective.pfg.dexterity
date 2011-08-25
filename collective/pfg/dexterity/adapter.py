@@ -29,8 +29,7 @@ from Products.PloneFormGen.config import FORM_ERROR_MARKER
 
 from Products.DataGridField import DataGridField, DataGridWidget, SelectColumn
 
-from Products.ATReferenceBrowserWidget.ATReferenceBrowserWidget import\
-    ReferenceBrowserWidget
+from archetypes.referencebrowserwidget.widget import ReferenceBrowserWidget
 
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.schema import SCHEMA_CACHE
