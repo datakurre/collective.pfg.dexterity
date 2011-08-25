@@ -11,6 +11,8 @@
 
   <i18n:registerTranslations directory="locales"/>
 
+  <class class=".adapter.DexterityContentAdapter"/>
+
   <genericsetup:registerProfile
      name="default"
      title="Dexterity PloneFromGen Adapter"
