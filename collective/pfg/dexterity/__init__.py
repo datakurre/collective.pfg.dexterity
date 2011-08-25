@@ -19,7 +19,7 @@ def initialize(context):
 
     # Retrieve the content types that have been registered with Archetypes
     # This happens when the content type is imported and the registerType()
-    # call in the content type's module is invoked. Actually, this happens
+    # call in the content type"s module is invoked. Actually, this happens
     # during ZCML processing, but we do it here again to be explicit. Of
     # course, even if we import the module several times, it is only run
     # once.
@@ -36,8 +36,9 @@ def initialize(context):
     # in the GenericSetup profile.
 
     for atype, constructor in zip(content_types, constructors):
-        utils.ContentInit('%s: %s' % (config.PROJECTNAME, atype.portal_type),
-            content_types      = (atype,),
-            permission         = config.ADD_PERMISSIONS[atype.portal_type],
-            extra_constructors = (constructor,),
+        utils.ContentInit("%s: %s" % (config.PROJECTNAME, atype.portal_type),
+            content_types=(atype,),
+            permission=config.ADD_PERMISSIONS[atype.portal_type],
+            extra_constructors=(constructor,),
+            fti=ftis,
             ).initialize(context)
