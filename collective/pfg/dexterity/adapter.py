@@ -3,6 +3,8 @@
 
 import logging
 
+from ZODB.POSException import ConflictError
+
 from zope.component import getUtility
 from zope.schema import TextLine, List
 from zope.schema.interfaces import IVocabularyFactory
@@ -160,13 +162,15 @@ DexterityContentAdapterSchema["description"].storage =\
 
 
 def unrestricted(func):
-    """Decorator for executing methods as unrestricted user"""
+    """Decorator for executing actions as unrestricted user"""
     def wrapper(self, *args, **kwargs):
         old_security_manager = getSecurityManager()
         newSecurityManager(
             None, UnrestrictedUser("manager", "", ["Manager"], []))
         try:
             return func(self, *args, **kwargs)
+        except ConflictError:
+            raise
         except:
             pass
         finally:
@@ -198,6 +202,8 @@ class DexterityContentAdapter(FormActionAdapter):
         ptool = getToolByName(self, "portal_properties")
         try:
             return ptool.get("site_properties").default_charset
+        except ConflictError:
+            raise
         except:
             return "utf-8"
 
@@ -215,6 +221,8 @@ class DexterityContentAdapter(FormActionAdapter):
             # to generate a custom id
             context = createContentInContainer(
                 targetFolder, createdType, checkConstraints=True)
+        except ConflictError:
+            raise
         except Exception, e:
             LOG.error(e)
             return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
@@ -250,6 +258,8 @@ class DexterityContentAdapter(FormActionAdapter):
 
             try:
                 field.set(context, value)
+            except ConflictError:
+                raise
             except Exception, e:
                 LOG.error(e)
                 # Setting value falied, remove incomplete submission
@@ -259,13 +269,16 @@ class DexterityContentAdapter(FormActionAdapter):
         # context.reindexObjectSecurity()
         context.reindexObject()
 
-        wftool = getToolByName(self, "portal_workflow")
-        try:
-            wftool.doActionFor(context, workflowTransition)
-        except Exception, e:
-            # Transition failed, remove incomplete submission
-            targetFolder.manage_delObjects([context.getId()])
-            return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
+        if workflowTransition:
+            wftool = getToolByName(self, "portal_workflow")
+            try:
+                wftool.doActionFor(context, workflowTransition)
+            except ConflictError:
+                raise
+            except Exception, e:
+                # Transition failed, remove incomplete submission
+                targetFolder.manage_delObjects([context.getId()])
+                return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
 
     def listTypes(self):
         types = getToolByName(self, "portal_types")
