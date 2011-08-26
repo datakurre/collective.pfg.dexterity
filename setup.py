@@ -29,6 +29,7 @@ setup(name="collective.pfg.dexterity",
         "Products.PloneFormGen",
         "Products.DataGridField",
       ],
+      extras_require = {"test": ["corejet.core", "plone.app.testing"]},
       entry_points="""
       # -*- Entry points: -*-
       [z3c.autoinclude.plugin]
