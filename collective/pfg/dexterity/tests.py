@@ -31,6 +31,13 @@ class MyFixture(PloneSandboxLayer):
         self.applyProfile(portal, "Products.DataGridField:default")
         self.applyProfile(portal, "collective.pfg.dexterity:default")
 
+        # portal.invokeFactory("Folder", "feedback", title=u"Feedback")
+
+        # from plone.dexterity.fti import DexterityFTI
+        # fti = DexterityFTI("Feedback")
+        # fti.behaviors = ("plone.app.dexterity.behaviors.metadata.IBasic")
+        # portal.portal_types._setObject("Feedback", fti)
+
     def tearDownZope(self, app):
         z2.uninstallProduct(app, "collective.pfg.dexterity")
         z2.uninstallProduct(app, "Products.DataGridField")
@@ -60,6 +67,12 @@ class I_want_to_create_dexterity_content_with_PFGform(unittest.TestCase):
 
     layer = MY_FUNCTIONAL_TESTING
 
+    def redo(self, name):
+        index = [s.name for s in self.scenarios].index(name)
+        scenario = self.scenarios[index]
+        for clause in scenario.givens + scenario.whens + scenario.thens:
+            clause(self)
+
     def setUp(self):
         self.browser = z2.Browser(self.layer["app"])
 
@@ -71,8 +84,8 @@ class I_want_to_create_dexterity_content_with_PFGform(unittest.TestCase):
     def portal_url(self):
         return self.portal.absolute_url()
 
-    @scenario("Adapter can be added")
-    class Adapter_can_be_added(Scenario):
+    @scenario("'Content adapter' is available")
+    class Content_adapter_is_available(Scenario):
 
         @given("I've got 'Manager' role")
         def Ive_got_Manager_role(self):
@@ -119,10 +132,50 @@ class I_want_to_create_dexterity_content_with_PFGform(unittest.TestCase):
         def I_move_into_that_folder(self):
             self.browser.open(self.portal_url + "/feedback")
 
-        @then("I can add a 'Dexterity Content Adapter'")
-        def I_can_add_a_Dexterity_Content_Adapter(self):
+        @then("I 'Content Adapter' becomes available to be added")
+        def I_Content_Adapter_becomes_available_to_be_added(self):
             try:
                 self.browser.getLink("Content Adapter")
             except:
                 self.assertTrue(
                     False, u"'Content Adapter' was not available to be added.")
+
+    @scenario("Content adapter can be added and configured")
+    class Content_adapter_can_be_added_and_configured(Scenario):
+
+        @given("'Content adapter' is available to be added")
+        def Content_adapter_is_available_to_be_added(self):
+            self.story.redo("'Content adapter' is available")
+            try:
+                self.browser.getLink("Content Adapter")
+            except:
+                self.assertTrue(
+                    False, u"'Content Adapter' was not available to be added.")
+
+        @given("There exists a Dexterity type named 'Ticket'")
+        def There_exists_a_Dexterity_type_named_Ticket(self):
+            pass
+
+        @given("It has at least fields 'Title' and 'Description'")
+        def It_has_at_least_fields_Title_and_Description(self):
+            pass
+
+        @given("There exists a 'Folder' named 'Tracker'")
+        def There_exists_a_Folder_named_Tracker(self):
+            pass
+
+        @when("I add a 'Content Adapter'")
+        def I_add_a_Content_Adapter(self):
+            self.browser.getLink("Content Adapter").click()
+            self.browser.getControl("Title").value = u"Content Adapter"
+            # ...
+            # we cannot complete adding adapter without a dexterity
+            # type and target folder
+
+        @when("I configure it to create 'Tickets' under 'Tracker'")
+        def I_configure_it_to_create_Tickets_under_Tracker(self):
+            pass
+
+        @then("I can create content using the form")
+        def I_can_create_content_using_the_form(self):
+            self.assertTrue(False, "This test needs to be finished.")
