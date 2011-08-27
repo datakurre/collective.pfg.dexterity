@@ -2,10 +2,11 @@
 """Dexterity content creation adapter for PloneFormGen"""
 
 import logging
+from time import time
 
 from ZODB.POSException import ConflictError
 
-from zope.component import getUtility
+from zope.component import getUtility, queryUtility
 from zope.schema import TextLine, List
 from zope.schema.interfaces import IVocabularyFactory
 
@@ -33,8 +34,10 @@ from Products.DataGridField import DataGridField, DataGridWidget, SelectColumn
 
 from archetypes.referencebrowserwidget.widget import ReferenceBrowserWidget
 
+from plone.memoize import ram
+from plone.behavior.interfaces import IBehavior
+
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.dexterity.schema import SCHEMA_CACHE
 from plone.dexterity.utils import createContentInContainer
 
 from plone.namedfile.interfaces import INamedFileField, INamedImageField
@@ -292,30 +295,42 @@ class DexterityContentAdapter(FormActionAdapter):
                           if IPloneFormGenField.providedBy(obj)]
         return atapi.DisplayList(fields)
 
-    def _getDexterityField(self, portal_type, name):
-        schemas = (SCHEMA_CACHE.get(portal_type),)\
-            + SCHEMA_CACHE.subtypes(portal_type)
-        for schema in schemas:
-            if name in schema:
-                return schema[name]
-        return None
+    @ram.cache(lambda method, self, portal_type: time() // 60)
+    def _getDexteritySchemas(self, portal_type):
+        fti = getUtility(IDexterityFTI, name=portal_type)
+        schemas = [fti.lookupSchema()]
+        # Schemas provided by behaviors can only be looked up by looping
+        # through behaviors or asking SCHEMA_CACHE for subtypes...
+        for behavior_name in fti.behaviors:
+            behavior = queryUtility(IBehavior, name=behavior_name)
+            if behavior is not None:
+                if behavior.marker is not None:
+                    schemas.append(behavior.marker)
+                elif behavior_name.startswith(
+                    "plone.app.dexterity.behaviors.metadata"):
+                    # ...except, for some good reason the default metadata
+                    # -behaviors don't have marker interface and therefore
+                    # won't appear when querying schemas using
+                    # SCHEMA_CACHE.subtypes.
+                    schemas.append(behavior.interface)
+        return schemas
 
     def _getDexterityFields(self, portal_type):
         fields = {}
-        schemas = (SCHEMA_CACHE.get(portal_type),)\
-            + SCHEMA_CACHE.subtypes(portal_type)
-        for schema in schemas:
+        for schema in self._getDexteritySchemas(portal_type):
             for name in schema:
-                fields[name] = name.title()
+                fields[name] = schema[name]
+        return fields
 
-        return [(key, fields[key]) for key in sorted(
-            fields, lambda x, y: cmp(fields[x].lower(), fields[y].lower()))]
+    def _getDexterityField(self, portal_type, name):
+        return self._dexterityFields(portal_type).get(name, None)
 
     def listContentFields(self):
         types = getToolByName(self, "portal_types")
         createdType = self.getCreatedType()
         if createdType in types.keys():
-            fields = self._getDexterityFields(createdType)
+            mapping = self._getDexterityFields(createdType)
+            fields = [(key, mapping[key].title) for key in mapping]
         else:
             fields = []
         return atapi.DisplayList(fields)
@@ -341,8 +356,8 @@ class DexterityContentAdapter(FormActionAdapter):
                 name=u"plone.app.vocabularies.WorkflowTransitions")(self)
             transitions = [(term.value, term.title) for term in vocabulary]
         return atapi.DisplayList([(u"", _(u"No transition"))]\
-            + sorted(transitions,
-                     lambda x, y: cmp(x[1].lower(), y[1].lower())))
+            + sorted(transitions, lambda x, y: cmp(x[1].lower(),\
+                                                   y[1].lower())))
 
 atapi.registerType(DexterityContentAdapter, PROJECTNAME)
 
