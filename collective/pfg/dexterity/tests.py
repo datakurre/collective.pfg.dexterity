@@ -58,8 +58,8 @@ from plone.app.testing import setRoles
 import transaction
 
 
-@story(id="17475767", title=("As a Site Administrator I want to create "
-                             "feedback form, which saves submissions as "
+@story(id="17475767", title=("As Site Administrator I want to create "
+                             "feedback form that saves submissions as "
                              "tickets"))
 class I_want_to_create_feedback_form(unittest.TestCase):
 
