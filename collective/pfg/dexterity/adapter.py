@@ -323,7 +323,7 @@ class DexterityContentAdapter(FormActionAdapter):
         return fields
 
     def _getDexterityField(self, portal_type, name):
-        return self._dexterityFields(portal_type).get(name, None)
+        return self._getDexterityFields(portal_type).get(name, None)
 
     def listContentFields(self):
         types = getToolByName(self, "portal_types")
