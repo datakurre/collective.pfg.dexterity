@@ -7,7 +7,7 @@ version = "0.1.0"
 setup(name="collective.pfg.dexterity",
       version=version,
       description="Installs dexterity content creation adapter for PloneFormGen.",
-      long_description=open("README.txt").read() + "\n" +
+      long_description=open("README.rst").read() + "\n" +
                        open("HISTORY.txt").read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[

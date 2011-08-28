@@ -17,7 +17,7 @@ Well...
 2. Create a custom tracker workflow for it using
    `uwosh.northstar <http://pypi.python.org/pypi/uwosh.northstar>`_.
 3. Create a custom submission form using
-   `PloneFormGen <http://pypi.python.org/pypi/Prouducts.PloneFormGen>`_
+   `PloneFormGen <http://pypi.python.org/pypi/Products.PloneFormGen>`_
    and this adapter.
 4. Profit.
 
