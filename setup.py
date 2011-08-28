@@ -2,7 +2,7 @@
 """collective.pfg.dexterity"""
 from setuptools import setup, find_packages
 
-version = "1.0"
+version = "0.1.0"
 
 setup(name="collective.pfg.dexterity",
       version=version,
@@ -17,7 +17,7 @@ setup(name="collective.pfg.dexterity",
       keywords="",
       author="Asko Soukka",
       author_email="asko.soukka@iki.fi",
-      url="",
+      url="https://github.com/datakurre/collective.pfg.dexterity/",
       license="ZPL",
       packages=find_packages(exclude=["ez_setup"]),
       namespace_packages=["collective", "collective.pfg"],
