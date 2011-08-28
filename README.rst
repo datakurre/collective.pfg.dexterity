@@ -6,7 +6,7 @@ using a form created with PloneFormGen through-the-web.
 
 At least the basic text input fields and file field should work.
 
-If the form is published, also visitors may create content submitting the it.
+If the form is published, also visitors may create content submitting it.
 
 Why would anyone want to create Dexterity content using PFG?
 
