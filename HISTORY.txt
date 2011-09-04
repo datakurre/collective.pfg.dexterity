@@ -1,8 +1,13 @@
 Changelog
 =========
 
+0.2.0 – 2011-09-04
+------------------
+
+- Use z3c.form adapters to convert data from request to field value.
+
 0.1.0 – 2011-08-28
 ------------------
 
-- First experimental release.
+- Proof of concept
 

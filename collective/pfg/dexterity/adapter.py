@@ -6,11 +6,11 @@ from time import time
 
 from ZODB.POSException import ConflictError
 
-from zope.component import getUtility, queryUtility
+from zope.component import getMultiAdapter, getUtility, queryUtility
 from zope.schema import TextLine, List
 from zope.schema.interfaces import IVocabularyFactory
 
-from zope.interface import implements
+from zope.interface import implements, alsoProvides
 
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
@@ -34,14 +34,13 @@ from Products.DataGridField import DataGridField, DataGridWidget, SelectColumn
 
 from archetypes.referencebrowserwidget.widget import ReferenceBrowserWidget
 
+from z3c.form.interfaces import IFormLayer, IFieldWidget, IDataConverter
+
 from plone.memoize import ram
 from plone.behavior.interfaces import IBehavior
 
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import createContentInContainer
-
-from plone.namedfile.interfaces import INamedFileField, INamedImageField
-from plone.formwidget.namedfile.converter import NamedDataConverter
 
 from collective.pfg.dexterity.interfaces import IDexterityContentAdapter
 from collective.pfg.dexterity.config import PROJECTNAME
@@ -50,7 +49,6 @@ from zope.i18nmessageid import MessageFactory as ZopeMessageFactory
 _ = ZopeMessageFactory("collective.pfg.dexterity")
 
 LOG = logging.getLogger("collective.pfg.dexterity")
-FILE_FIELDS = (INamedFileField, INamedImageField)
 
 
 DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
@@ -230,14 +228,13 @@ class DexterityContentAdapter(FormActionAdapter):
             LOG.error(e)
             return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
 
+        alsoProvides(REQUEST, IFormLayer)  # enable to find z3c.form adapters
         for mapping in fieldMapping:
             field = self._getDexterityField(createdType, mapping["content"])
             field.bind(context)
 
-            if True in [i.providedBy(field) for i in FILE_FIELDS]:
-                # Here we use NamedFile"s data converter adapter...
-                upload = REQUEST.get("%s_file" % mapping["form"], None)
-                value = NamedDataConverter(field, None).toFieldValue(upload)
+            if "%s_file" % mapping["form"] in REQUEST:
+                value = REQUEST.get("%s_file" % mapping["form"])
             else:
                 value = REQUEST.get(mapping["form"], None)
                 # Convert strings to unicode
@@ -260,17 +257,17 @@ class DexterityContentAdapter(FormActionAdapter):
                 value = [s.strip() for s in value.split(u"\n") if s]
 
             try:
-                field.set(context, value)
+                # Convert data from REQUST to field using z3c.form adapters
+                widget = getMultiAdapter((field, REQUEST), IFieldWidget)
+                converter = IDataConverter(widget)
+                field.set(context, converter.toFieldValue(value))
             except ConflictError:
                 raise
             except Exception, e:
                 LOG.error(e)
-                # Setting value falied, remove incomplete submission
+                # Setting value failed, remove incomplete submission
                 targetFolder.manage_delObjects([context.getId()])
                 return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
-
-        # context.reindexObjectSecurity()
-        context.reindexObject()
 
         if workflowTransition:
             wftool = getToolByName(self, "portal_workflow")
@@ -282,6 +279,9 @@ class DexterityContentAdapter(FormActionAdapter):
                 # Transition failed, remove incomplete submission
                 targetFolder.manage_delObjects([context.getId()])
                 return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
+
+        # context.reindexObjectSecurity()
+        context.reindexObject()
 
     def listTypes(self):
         types = getToolByName(self, "portal_types")
