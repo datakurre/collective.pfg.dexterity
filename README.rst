@@ -15,11 +15,12 @@ Well...
 1. Create a new custom submission content type through-the-web using
    `plone.app.dexterity <http://pypi.python.org/pypi/plone.app.dexterity>`_.
 2. Create a custom tracker workflow for it using
-   `uwosh.northstar <http://pypi.python.org/pypi/uwosh.northstar>`_.
+   `plone.app.workflowmanager <http://pypi.python.org/pypi/plone.app.workflowmanager>`_.
 3. Create a custom submission form using
    `PloneFormGen <http://pypi.python.org/pypi/Products.PloneFormGen>`_
    and this adapter.
-4. Profit.
+4. ...
+5. Profit.
 
 If you like the idea and think this could be useful, please, contribute at:
 https://github.com/datakurre/collective.pfg.dexterity
