@@ -2,12 +2,14 @@
 """Dexterity content creation adapter for PloneFormGen"""
 
 import logging
+
+import re
 from time import time
 
 from ZODB.POSException import ConflictError
 
 from zope.component import getMultiAdapter, getUtility, queryUtility
-from zope.schema import TextLine, List
+from zope.schema import TextLine, List, Datetime
 from zope.schema.interfaces import IVocabularyFactory
 
 from zope.interface import implements, alsoProvides
@@ -34,7 +36,8 @@ from Products.DataGridField import DataGridField, DataGridWidget, SelectColumn
 
 from archetypes.referencebrowserwidget.widget import ReferenceBrowserWidget
 
-from z3c.form.interfaces import IFormLayer, IFieldWidget, IDataConverter
+from z3c.form.interfaces import\
+    IFormLayer, IFieldWidget, IDataConverter, IDataManager
 
 from plone.memoize import ram
 from plone.behavior.interfaces import IBehavior
@@ -228,7 +231,7 @@ class DexterityContentAdapter(FormActionAdapter):
             LOG.error(e)
             return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
 
-        alsoProvides(REQUEST, IFormLayer)  # enable to find z3c.form adapters
+        alsoProvides(REQUEST, IFormLayer)  # let us to find z3c.form adapters
         for mapping in fieldMapping:
             field = self._getDexterityField(createdType, mapping["content"])
             field.bind(context)
@@ -242,7 +245,11 @@ class DexterityContentAdapter(FormActionAdapter):
                     value = unicode(value, self.default_encoding,
                                     errors="ignore")
 
-            # Here we apply a few convenience heuristic
+            # Convert datetimes to collective.z3cform.datetime-compatible
+            if isinstance(field, Datetime):
+                value = re.compile("\d+").findall(value)
+
+            # XXX: Here we apply a few controversial convenience heuristics
             if isinstance(field, TextLine):
                 # 1) Multiple text lines into the same field
                 try:
@@ -251,7 +258,7 @@ class DexterityContentAdapter(FormActionAdapter):
                     old_value = None
                 if old_value and value:
                     value = u" ".join((old_value, value))
-            if isinstance(field, List) and isinstance(value, unicode):
+            elif isinstance(field, List) and isinstance(value, unicode):
                 # 2) Split keyword (just a guess) string into list
                 value = value.replace(u",", u"\n")
                 value = [s.strip() for s in value.split(u"\n") if s]
@@ -260,7 +267,8 @@ class DexterityContentAdapter(FormActionAdapter):
                 # Convert data from REQUST to field using z3c.form adapters
                 widget = getMultiAdapter((field, REQUEST), IFieldWidget)
                 converter = IDataConverter(widget)
-                field.set(context, converter.toFieldValue(value))
+                dm = getMultiAdapter((context, field), IDataManager)
+                dm.set(converter.toFieldValue(value))
             except ConflictError:
                 raise
             except Exception, e:
@@ -280,7 +288,6 @@ class DexterityContentAdapter(FormActionAdapter):
                 targetFolder.manage_delObjects([context.getId()])
                 return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
 
-        # context.reindexObjectSecurity()
         context.reindexObject()
 
     def listTypes(self):
