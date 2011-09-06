@@ -1,0 +1,2 @@
+include *.rst *.txt *.py *.py
+recursive-include collective *.py *.zcml *.po *.xml
