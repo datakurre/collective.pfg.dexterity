@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-08-25 15:21+0000\n"
+"POT-Creation-Date: 2011-09-07 17:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Content Adapter"
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:60
+#: collective/pfg/dexterity/adapter.py:65
 msgid "Content type"
 msgstr ""
 
@@ -29,43 +29,43 @@ msgstr ""
 msgid "Dexterity content creation adapter for PloneFormGen."
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:91
+#: collective/pfg/dexterity/adapter.py:96
 msgid "Field mapping"
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:92
+#: collective/pfg/dexterity/adapter.py:97
 msgid "Map form fields to fields of the selected content type. Please note, that you must first select the content type, then save this adapter, and only then you'll be able to see the fields of the selected content type."
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:331
+#: collective/pfg/dexterity/adapter.py:365
 msgid "No transition"
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:100
+#: collective/pfg/dexterity/adapter.py:105
 msgid "Select a form field"
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:71
+#: collective/pfg/dexterity/adapter.py:76
 msgid "Select the target folder, where created new content should be placed. Please, make sure that the folder allows adding content of the selected type."
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:61
+#: collective/pfg/dexterity/adapter.py:66
 msgid "Select the type of new content to be created."
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:70
+#: collective/pfg/dexterity/adapter.py:75
 msgid "Target folder"
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:115
+#: collective/pfg/dexterity/adapter.py:120
 msgid "Trigger workflow transition"
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:116
+#: collective/pfg/dexterity/adapter.py:121
 msgid "You may select a workflow transition to be triggered after new content is created."
 msgstr ""
 
-#: collective/pfg/dexterity/adapter.py:103
+#: collective/pfg/dexterity/adapter.py:108
 msgid "to be mapped to a content field."
 msgstr ""
 
