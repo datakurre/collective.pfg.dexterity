@@ -2,7 +2,7 @@
 """collective.pfg.dexterity"""
 from setuptools import setup, find_packages
 
-version = "0.2.4"
+version = "0.3.0"
 
 setup(name="collective.pfg.dexterity",
       version=version,
