@@ -1,3 +1,4 @@
-sauna.reload.egg-info/
+collective.pfg.dexterity.egg-info/
 dist/
 *.pyc
+*.mo

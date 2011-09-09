@@ -234,7 +234,6 @@ class DexterityContentAdapter(FormActionAdapter):
         alsoProvides(REQUEST, IFormLayer)  # let us to find z3c.form adapters
         for mapping in fieldMapping:
             field = self._getDexterityField(createdType, mapping["content"])
-            field.bind(context)
 
             if "%s_file" % mapping["form"] in REQUEST:
                 value = REQUEST.get("%s_file" % mapping["form"])
@@ -263,19 +262,28 @@ class DexterityContentAdapter(FormActionAdapter):
                 value = value.replace(u",", u"\n")
                 value = [s.strip() for s in value.split(u"\n") if s]
 
+            # Try to set the value on creted object
             try:
-                # Convert data from REQUST to field using z3c.form adapters
-                widget = getMultiAdapter((field, REQUEST), IFieldWidget)
-                converter = IDataConverter(widget)
-                dm = getMultiAdapter((context, field), IDataManager)
-                dm.set(converter.toFieldValue(value))
+                # 1) Try to set it directly
+                bound_field = field.bind(context)
+                bound_field.validate(value)
+                bound_field.set(context, value)
             except ConflictError:
                 raise
             except Exception, e:
-                LOG.error(e)
-                # Setting value failed, remove incomplete submission
-                targetFolder.manage_delObjects([context.getId()])
-                return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
+                try:
+                    # 2) Try your luck with z3c.form adapters
+                    widget = getMultiAdapter((field, REQUEST), IFieldWidget)
+                    converter = IDataConverter(widget)
+                    dm = getMultiAdapter((context, field), IDataManager)
+                    dm.set(converter.toFieldValue(value))
+                except ConflictError:
+                    raise
+                except Exception:
+                    LOG.error(e)
+                    # Setting value failed, remove incomplete submission
+                    targetFolder.manage_delObjects([context.getId()])
+                    return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
 
         if workflowTransition:
             wftool = getToolByName(self, "portal_workflow")
