@@ -27,7 +27,7 @@ class Fixture(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):
         # PLONE_FIXTURE has no default workflow chain set
-        portal.portal_workflow.setDefaultChain("folder_workflow")
+        portal.portal_workflow.setDefaultChain("simple_publication_workflow")
 
         self.applyProfile(portal, "plone.app.dexterity:default")
         self.applyProfile(portal, "Products.PloneFormGen:default")
