@@ -25,6 +25,7 @@ from Products.Archetypes.Widget import SelectionWidget
 from Products.ATContentTypes.content.schemata import finalizeATCTSchema
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import ModifyPortalContent
 
 from Products.PloneFormGen.interfaces import IPloneFormGenField
 from Products.PloneFormGen.interfaces import IPloneFormGenActionAdapter
@@ -58,17 +59,21 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
     atapi.StringField(
         "createdType",
         required=True,
+        write_permission=ModifyPortalContent,
+        read_permission=ModifyPortalContent,
         storage=atapi.AnnotationStorage(),
         searchable=False,
         vocabulary="listTypes",
         widget=SelectionWidget(
             label=_(u"Content type"),
             description=_(u"Select the type of new content to be created.")
-        ),
+        )
     ),
     atapi.ReferenceField(
         "targetFolder",
         required=True,
+        write_permission=ModifyPortalContent,
+        read_permission=ModifyPortalContent,
         storage=atapi.AnnotationStorage(),
         searchable=False,
         widget=ReferenceBrowserWidget(
@@ -81,11 +86,13 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
         ),
         relationship="targetFolder",
         allowed_types=("Folder",),
-        multiValued=False,
+        multiValued=False
     ),
     DataGridField(
         "fieldMapping",
         required=True,
+        write_permission=ModifyPortalContent,
+        read_permission=ModifyPortalContent,
         storage=atapi.AnnotationStorage(),
         searchable=False,
         allow_delete=True,
@@ -108,11 +115,13 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
                     _(u"to be mapped to a content field."),
                     vocabulary="listContentFields")
             },
-        ),
+        )
     ),
     atapi.StringField(
         "workflowTransition",
         required=False,
+        write_permission=ModifyPortalContent,
+        read_permission=ModifyPortalContent,
         storage=atapi.AnnotationStorage(),
         searchable=False,
         vocabulary="listTransitions",
@@ -130,6 +139,8 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
     # atapi.StringField(
     #     "containedType",
     #     required=False,
+    #     write_permission=ModifyPortalContent,
+    #     read_permission=ModifyPortalContent,
     #     storage=atapi.AnnotationStorage(),
     #     searchable=False,
     #     vocabulary="listNamedfileTypes",
@@ -175,12 +186,9 @@ def unrestricted(func):
             return func(self, *args, **kwargs)
         except ConflictError:
             raise
-        except:
-            pass
         finally:
             # Note that finally is also called before return
             setSecurityManager(old_security_manager)
-        return func(self, *args, **kwargs)
     return wrapper
 
 
