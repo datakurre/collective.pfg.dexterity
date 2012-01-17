@@ -42,6 +42,7 @@ from z3c.form.interfaces import\
 
 from plone.memoize import ram
 from plone.behavior.interfaces import IBehavior
+from plone.directives.form import IFormFieldProvider
 
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import createContentInContainer
@@ -326,16 +327,9 @@ class DexterityContentAdapter(FormActionAdapter):
         # through behaviors or asking SCHEMA_CACHE for subtypes...
         for behavior_name in fti.behaviors:
             behavior = queryUtility(IBehavior, name=behavior_name)
-            if behavior is not None:
-                if behavior.marker is not None:
-                    schemas.append(behavior.marker)
-                elif behavior_name.startswith(
-                    "plone.app.dexterity.behaviors.metadata"):
-                    # ...except, for some good reason the default metadata
-                    # -behaviors don't have marker interface and therefore
-                    # won't appear when querying schemas using
-                    # SCHEMA_CACHE.subtypes.
-                    schemas.append(behavior.interface)
+            if behavior is not None\
+                and IFormFieldProvider.providedBy(behavior.interface):
+                schemas.append(behavior.interface)
         return schemas
 
     def _getDexterityFields(self, portal_type):
