@@ -162,6 +162,24 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
                                    u"created."))
         ),
     ),
+    atapi.StringField(
+        "createdURL",
+        required=False,
+        write_permission=ModifyPortalContent,
+        read_permission=ModifyPortalContent,
+        storage=atapi.AnnotationStorage(),
+        searchable=False,
+        vocabulary="listOptionalFormFields",
+        widget=SelectionWidget(
+            label=_("create_url_label",
+                    default=u"Save URL"),
+            description=_("created_url_help",
+                          default=(u"You may select a form field to be "
+                                   u"filled with the URL of the created "
+                                   u"content. The field may be hidden on "
+                                   u"the original form."))
+        ),
+    ),
     ### TODO: I've been thinking about enhancing this adapter to be able
     ### to 1) first create a container and 2) then add file types into that
     ### container. Although, this has been delayed, since I'm not yet
@@ -308,6 +326,7 @@ class DexterityContentAdapter(FormActionAdapter):
         fieldMapping = self.getFieldMapping()
         giveOwnership = self.getGiveOwnership()
         workflowTransition = self.getWorkflowTransition()
+        urlField = self.getCreatedURL()
 
         values = {}
 
@@ -315,7 +334,6 @@ class DexterityContentAdapter(FormActionAdapter):
         site_encoding = plone_utils.getSiteEncoding()
 
         # Parse values from the submission
-
         alsoProvides(REQUEST, IFormLayer)  # let us to find z3c.form adapters
         for mapping in fieldMapping:
             field = self._getDexterityField(createdType, mapping["content"])
@@ -346,7 +364,6 @@ class DexterityContentAdapter(FormActionAdapter):
             values[mapping["content"]] = (field, value)
 
         # Create content with parsed title (or without it)
-
         try:
             # README: id for new content will be choosed by
             # INameChooser(container).chooseName(None, object),
@@ -364,7 +381,6 @@ class DexterityContentAdapter(FormActionAdapter):
             return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
 
         # Set all parsed values for the created content
-
         for field, value in values.values():
             error_msg = self._setAsOwner(context, field, value)
             if error_msg:
@@ -372,7 +388,6 @@ class DexterityContentAdapter(FormActionAdapter):
                 return {FORM_ERROR_MARKER: error_msg}
 
         # Give ownership for the logged-in submitter, when that's enabled
-
         if giveOwnership:
             mtool = getToolByName(self, "portal_membership")
             if not mtool.isAnonymousUser():
@@ -383,7 +398,6 @@ class DexterityContentAdapter(FormActionAdapter):
                 context.manage_setLocalRoles(member.getId(), ["Owner",])
 
         # Trigger a worklfow transition when set
-
         if workflowTransition:
             wftool = getToolByName(self, "portal_workflow")
             error_msg = self._doActionAsOwner(wftool, context,
@@ -393,8 +407,11 @@ class DexterityContentAdapter(FormActionAdapter):
                 return {FORM_ERROR_MARKER: error_msg}
 
         # Reindex at the end
-
         self._reindexAsOwner(context)
+
+        # Set URL to the created content
+        if urlField:
+            REQUEST.form[urlField] = context.absolute_url()
 
     security.declarePrivate("listTypes")
     def listTypes(self):
@@ -409,6 +426,13 @@ class DexterityContentAdapter(FormActionAdapter):
                   for obj in self.aq_parent.objectValues()\
                           if IPloneFormGenField.providedBy(obj)]
         return atapi.DisplayList(fields)
+
+    security.declarePrivate("listOptionalFormFields")
+    def listOptionalFormFields(self):
+        fields = [(obj.getId(), obj.title_or_id())
+                  for obj in self.aq_parent.objectValues()\
+                          if IPloneFormGenField.providedBy(obj)]
+        return atapi.DisplayList([(u"", _(u"Don't save"))] + fields)
 
     @ram.cache(lambda method, self, portal_type: time() // 60)
     def _getDexteritySchemas(self, portal_type):
