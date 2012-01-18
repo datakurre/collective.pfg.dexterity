@@ -1,16 +1,21 @@
 Dexterity PFG Adapter
 =====================
 
-This is an experimental PloneFormGen adapter for creating dexterity content
-using a form created with PloneFormGen through-the-web.
+This product installs a custom PloneFormGen adapter for creating new dexterity
+content objects from PloneFormGen form submissions.
 
-At least the basic text input fields and file field should work.
+Dexterity content types must be defined by other packages or be created using
+the dexterity schema editor, but otherwise the installed *Content Adapter* can
+be used as a part of existing PloneFormGen adapter chains.
 
-If the form is published, also visitors may create content submitting it.
+When the form is published, also visitors may create content by submitting it.
 
-Why would anyone want to create Dexterity content using PFG?
+By default the content is created using the permissions of the owner of the
+*Content Adapter* object, but there's an option to allow logged-in form
+submitter to own the content after creation.
 
-Well...
+This product could be used with other known packages to create a more complete
+*through-the-web* -experience on Plone. For example:
 
 1. Create a new custom submission content type through-the-web using
    `plone.app.dexterity <http://pypi.python.org/pypi/plone.app.dexterity>`_.
@@ -22,5 +27,10 @@ Well...
 4. ...
 5. Profit.
 
-If you like the idea and think this could be useful, please, contribute at:
-https://github.com/datakurre/collective.pfg.dexterity
+This product may not yet support all of the PloneFormGen's or Dexterity's
+fields. If you like the idea and think this could be useful, please,
+contribute at: https://github.com/datakurre/collective.pfg.dexterity
+
+P.S. If you find it redundant to first create a PloneFormGen-form and then
+define a similar dexterity content type, check out if `uwosh.pfg.d2c
+<http://pypi.python.org/pypi/uwosh.pfg.d2c>`_ is a better fit for you.
