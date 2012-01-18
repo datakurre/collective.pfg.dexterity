@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-01-18 15:54+0000\n"
+"POT-Creation-Date: 2012-01-18 16:50+0000\n"
 "PO-Revision-Date: 2012-01-18 17:54+0200\n"
 "Last-Translator: Benjamin Klups <benjamin.klups@noveltys.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,9 +22,18 @@ msgstr "Adaptateur de contenu"
 msgid "Dexterity content creation adapter for PloneFormGen."
 msgstr "Adaptateur de création de contenu Dexterity pour PloneFormGen"
 
-#: collective/pfg/dexterity/adapter.py:469
+#: collective/pfg/dexterity/adapter.py:435
+msgid "Don't save"
+msgstr ""
+
+#: collective/pfg/dexterity/adapter.py:492
 msgid "No transition"
 msgstr "Pas de transition"
+
+#. Default: "Save URL"
+#: collective/pfg/dexterity/adapter.py:174
+msgid "create_url_label"
+msgstr ""
 
 #. Default: "Select the type of new content to be created."
 #: collective/pfg/dexterity/adapter.py:72
@@ -35,6 +44,11 @@ msgstr "Sélectionnez le nouveau type de contenu a créer."
 #: collective/pfg/dexterity/adapter.py:70
 msgid "created_type_label"
 msgstr "Type de contenu"
+
+#. Default: "You may select a form field to be filled with the URL of the created content. The field may be hidden on the original form."
+#: collective/pfg/dexterity/adapter.py:176
+msgid "created_url_help"
+msgstr ""
 
 #. Default: "to be mapped to a content field."
 #: collective/pfg/dexterity/adapter.py:142
