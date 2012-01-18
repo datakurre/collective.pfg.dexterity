@@ -434,7 +434,7 @@ class DexterityContentAdapter(FormActionAdapter):
             candidates = []
             transitions = []
             for workflow in [workflows.get(key) for key in\
-                             workflows.getChainForPortalType("Submission")
+                             workflows.getChainForPortalType(createdType)
                              if key in workflows.keys()]:
                 candidates.extend(
                     workflow.states.get(workflow.initial_state).transitions)
