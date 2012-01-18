@@ -245,7 +245,7 @@ class I_want_to_create_feedback_form(unittest.TestCase):
         @when("I set field 'Subject' to be saved to 'Title' on 'Ticket'")
         def I_set_field_Subject_to_be_saved_to_Title_on_Ticket(self):
             # We need to "Save" form once to update field mapping options
-            self.browser.getControl("Save").click()
+            self.browser.getControl(name="form.button.save").click()
             self.browser.getLink("Edit").click()
             # Now we can add the first mapping
             self.browser.getControl(name="fieldMapping.form:records",
@@ -258,7 +258,7 @@ class I_want_to_create_feedback_form(unittest.TestCase):
         @when("I set field 'Comment' to be saved to 'Description' on 'Ticket'")
         def I_set_field_Comment_to_be_saved_to_Description_on_Ticket(self):
             # We need to "Save" form once to be able to add a new mapping
-            self.browser.getControl("Save").click()
+            self.browser.getControl(name="form.button.save").click()
             self.browser.getLink("Edit").click()
             # Now we can continue to add the second mapping
             self.browser.getControl(name="fieldMapping.form:records",
@@ -270,7 +270,7 @@ class I_want_to_create_feedback_form(unittest.TestCase):
 
         @when("I save the adapter")
         def I_save_the_adapter(self):
-            self.browser.getControl("Save").click()
+            self.browser.getControl(name="form.button.save").click()
 
         @then("I can create a new 'Ticket' by submitting the form")
         def I_can_create_a_new_Ticket_by_submitting_the_form(self):
