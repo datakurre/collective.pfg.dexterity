@@ -332,13 +332,12 @@ class DexterityContentAdapter(FormActionAdapter):
             if isinstance(field, Datetime):
                 value = re.compile("\d+").findall(value)
 
-            # XXX: Here we apply a few controversial convenience heuristics
-            if isinstance(field, TextLine):
+            # Apply a few controversial convenience heuristics
+            if isinstance(field, TextLine) and isinstance(value, unicode):
                 # 1) Multiple text lines into the same field
                 old_value = values.get(mapping["content"])
                 if old_value and value:
                     value = u" ".join((old_value[1], value))
-
             elif isinstance(field, List) and isinstance(value, unicode):
                 # 2) Split keyword (just a guess) string into list
                 value = value.replace(u",", u"\n")
