@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-09-07 17:17+0000\n"
-"PO-Revision-Date: 2011-09-07 HO:MI +ZONE\n"
+"POT-Creation-Date: 2012-01-18 15:54+0000\n"
+"PO-Revision-Date: 2012-01-18 17:54+0200\n"
 "Last-Translator: Benjamin Klups <benjamin.klups@noveltys.fr>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,51 +18,71 @@ msgstr ""
 msgid "Content Adapter"
 msgstr "Adaptateur de contenu"
 
-#: collective/pfg/dexterity/adapter.py:65
-msgid "Content type"
-msgstr "Type de contenu"
-
 #: collective/pfg/dexterity/profiles/default/types/Dexterity_Content_Adapter.xml
 msgid "Dexterity content creation adapter for PloneFormGen."
 msgstr "Adaptateur de création de contenu Dexterity pour PloneFormGen"
 
-#: collective/pfg/dexterity/adapter.py:96
-msgid "Field mapping"
-msgstr "Cartographie des champs"
-
-#: collective/pfg/dexterity/adapter.py:97
-msgid "Map form fields to fields of the selected content type. Please note, that you must first select the content type, then save this adapter, and only then you'll be able to see the fields of the selected content type."
-msgstr "Lier les champs de formulaire aux champs du type de contenu sélectionné. Merci de noter que vous devez d'abord sélectionner le type de contenu, puis enregistrez cet adaptateur, et alors seulement vous serez capables de voir les champs du type de contenu sélectionné."
-
-#: collective/pfg/dexterity/adapter.py:365
+#: collective/pfg/dexterity/adapter.py:469
 msgid "No transition"
 msgstr "Pas de transition"
 
-#: collective/pfg/dexterity/adapter.py:105
-msgid "Select a form field"
-msgstr "Sélectionnez un champ de formulaire"
-
-#: collective/pfg/dexterity/adapter.py:76
-msgid "Select the target folder, where created new content should be placed. Please, make sure that the folder allows adding content of the selected type."
-msgstr "Sélectionnez le dossier cible, où les nouveaux contenu créés devraient être placés. Merci de vous assurez que le dossier permet l'ajout de contenu du type sélectionné."
-
-#: collective/pfg/dexterity/adapter.py:66
-msgid "Select the type of new content to be created."
+#. Default: "Select the type of new content to be created."
+#: collective/pfg/dexterity/adapter.py:72
+msgid "created_type_help"
 msgstr "Sélectionnez le nouveau type de contenu a créer."
 
-#: collective/pfg/dexterity/adapter.py:75
-msgid "Target folder"
+#. Default: "Content type"
+#: collective/pfg/dexterity/adapter.py:70
+msgid "created_type_label"
+msgstr "Type de contenu"
+
+#. Default: "to be mapped to a content field."
+#: collective/pfg/dexterity/adapter.py:142
+msgid "field_mapping_content_label"
+msgstr "qui doit être relié à un champ de contenu."
+
+#. Default: "Select a form field"
+#: collective/pfg/dexterity/adapter.py:138
+msgid "field_mapping_form_label"
+msgstr "Sélectionnez un champ de formulaire"
+
+#. Default: "Map form fields to fields of the selected content type. Please note, that you must first select the content type, then save this adapter, and only then you'll be able to see the fields of the selected content type."
+#: collective/pfg/dexterity/adapter.py:129
+msgid "field_mapping_help"
+msgstr "Lier les champs de formulaire aux champs du type de contenu sélectionné. Merci de noter que vous devez d'abord sélectionner le type de contenu, puis enregistrez cet adaptateur, et alors seulement vous serez capables de voir les champs du type de contenu sélectionné."
+
+#. Default: "Field mapping"
+#: collective/pfg/dexterity/adapter.py:127
+msgid "field_mapping_label"
+msgstr "Cartographie des champs"
+
+#. Default: "Select this to transfer the ownership of created content to the logged-in user. This has no effect for anonymous users."
+#: collective/pfg/dexterity/adapter.py:108
+msgid "give_ownership_help"
+msgstr ""
+
+#. Default: "Give ownership"
+#: collective/pfg/dexterity/adapter.py:106
+msgid "give_ownership_label"
+msgstr ""
+
+#. Default: "Select the target folder, where created new content should be placed. Please, make sure that the folder allows adding content of the selected type."
+#: collective/pfg/dexterity/adapter.py:87
+msgid "target_folder_help"
+msgstr "Sélectionnez le dossier cible, où les nouveaux contenu créés devraient être placés. Merci de vous assurez que le dossier permet l'ajout de contenu du type sélectionné."
+
+#. Default: "Target folder"
+#: collective/pfg/dexterity/adapter.py:85
+msgid "target_folder_label"
 msgstr "Dossier cible"
 
-#: collective/pfg/dexterity/adapter.py:120
-msgid "Trigger workflow transition"
-msgstr "Première transition de workflow"
-
-#: collective/pfg/dexterity/adapter.py:121
-msgid "You may select a workflow transition to be triggered after new content is created."
+#. Default: "You may select a workflow transition to be triggered after new content is created."
+#: collective/pfg/dexterity/adapter.py:159
+msgid "workflow_transition_help"
 msgstr "Vous pouvez sélectionner la transition de workflow pouvant être déclenchée après la création du nouveau contenu."
 
-#: collective/pfg/dexterity/adapter.py:108
-msgid "to be mapped to a content field."
-msgstr "qui doit être relié à un champ de contenu."
+#. Default: "Trigger workflow transition"
+#: collective/pfg/dexterity/adapter.py:157
+msgid "workflow_transition_label"
+msgstr "Première transition de workflow"
 

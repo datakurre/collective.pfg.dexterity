@@ -67,8 +67,11 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
         searchable=False,
         vocabulary="listTypes",
         widget=SelectionWidget(
-            label=_(u"Content type"),
-            description=_(u"Select the type of new content to be created.")
+            label=_("created_type_label",
+                    default=u"Content type"),
+            description=_("created_type_help",
+                          default=(u"Select the type of new content "
+                                   u"to be created."))
         )
     ),
     atapi.ReferenceField(
@@ -79,11 +82,13 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
         storage=atapi.AnnotationStorage(),
         searchable=False,
         widget=ReferenceBrowserWidget(
-            label=_(u"Target folder"),
-            description=_((u"Select the target folder, where created new "
-                           u"content should be placed. Please, make sure "
-                           u"that the folder allows adding content of the "
-                           u"selected type.")),
+            label=_("target_folder_label",
+                    default=u"Target folder"),
+            description=_("target_folder_help",
+                          default=(u"Select the target folder, where created "
+                                   u"new content should be placed. Please, "
+                                   u"make sure that the folder allows adding "
+                                   u"content of the selected type.")),
             base_query={"portal_type": "Folder"},
         ),
         relationship="targetFolder",
@@ -98,10 +103,12 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
         storage=atapi.AnnotationStorage(),
         searchable=False,
         widget=atapi.BooleanWidget(
-            label=_(u"Give ownership"),
-            description=_((u"Select this to transfer the ownership of "
-                           u"created content to the logged-in user. "
-                           u"This has no effect for anonymous users."))
+            label=_("give_ownership_label",
+                    default=u"Give ownership"),
+            description=_("give_ownership_help",
+                          default=(u"Select this to transfer the ownership of "
+                                   u"created content to the logged-in user. "
+                                   u"This has no effect for anonymous users."))
         ),
         default=False
     ),
@@ -117,19 +124,23 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
         allow_reorder=True,
         columns=("form", "content"),
         widget=DataGridWidget(
-            label=_(u"Field mapping"),
-            description=_((u"Map form fields to fields of the selected "
-                           u"content type. Please note, that you must "
-                           u"first select the content type, then save "
-                           u"this adapter, and only then you'll be able "
-                           u"to see the fields of the selected content "
-                           u"type.")),
+            label=_("field_mapping_label",
+                    default=u"Field mapping"),
+            description=_("field_mapping_help",
+                          default=(u"Map form fields to fields of the "
+                                   u"selected content type. Please note, "
+                                   u"that you must first select the content "
+                                   u"type, then save this adapter, and only "
+                                   u"then you'll be able to see the fields "
+                                   u"of the selected content type.")),
             columns={
                 "form": SelectColumn(
-                    _(u"Select a form field"),
+                    _("field_mapping_form_label",
+                      default=u"Select a form field"),
                     vocabulary="listFormFields"),
                 "content": SelectColumn(
-                    _(u"to be mapped to a content field."),
+                    _("field_mapping_content_label",
+                      default=u"to be mapped to a content field."),
                     vocabulary="listContentFields")
             },
         )
@@ -143,9 +154,12 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
         searchable=False,
         vocabulary="listTransitions",
         widget=SelectionWidget(
-            label=_(u"Trigger workflow transition"),
-            description=_((u"You may select a workflow transition to be "
-                           u"triggered after new content is created."))
+            label=_("workflow_transition_label",
+                    default=u"Trigger workflow transition"),
+            description=_("workflow_transition_help",
+                          default=(u"You may select a workflow transition "
+                                   u"to be triggered after new content is "
+                                   u"created."))
         ),
     ),
     ### TODO: I've been thinking about enhancing this adapter to be able
@@ -162,11 +176,14 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
     #     searchable=False,
     #     vocabulary="listNamedfileTypes",
     #     widget=SelectionWidget(
-    #         label=_(u"Attachment Content type"),
-    #         description=_((u"When the selected content type to be created "
-    #                        u"is a container type and the form contains file "
-    #                        u"fields, you may select a separate type for "
-    #                        u"adding those files inside the container."))
+    #         label=_("contained_type_lable",
+    #                 default=u"Attachment Content type"),
+    #         description=_("contained_type_help",
+    #                       default=(u"When the selected content type to be "
+    #                                u"created is a container type and the form "
+    #                                u"contains file fields, you may select "
+    #                                u"a separate type for adding those files "
+    #                                u"inside the container."))
     #     ),
     # ),
     # atapi.StringField(
@@ -176,12 +193,15 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
     #     searchable=False,
     #     vocabulary="listNamedfileTransitions",
     #     widget=SelectionWidget(
-    #         label=_(u"Trigger attachment"s workflow transition"),
-    #         description=_((u"You may select a workflow transition to be "
-    #                        u"triggered after new file is added into the"
-    #                        u"container. The selected transition will be "
-    #                        u"triggered only after the selected transition "
-    #                        u"for the container has been triggered."))
+    #         label=_("contained_workflow_transition_label",
+    #                 default=u"Trigger attachment's workflow transition"),
+    #         description=_("contained_workflow_transition_help",
+    #                       default=(u"You may select a workflow transition "
+    #                                u"to be triggered after new file is added "
+    #                                u"into the container. The selected "
+    #                                u"transition will be triggered only "
+    #                                u"after the selected transition for "
+    #                                u"the container has been triggered."))
     #     ),
     # ),
 ))
