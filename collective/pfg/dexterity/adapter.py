@@ -11,14 +11,15 @@ from ZODB.POSException import ConflictError
 from zope.component import getMultiAdapter, getUtility, queryUtility
 from zope.schema import TextLine, List, Datetime
 from zope.schema.interfaces import IVocabularyFactory
-
+from zope.globalrequest import getRequest
 from zope.interface import implements, alsoProvides
 
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
 
-from AccessControl.User import UnrestrictedUser
+from AccessControl import ClassSecurityInfo
+from AccessControl.interfaces import IOwned
 
 from Products.Archetypes import atapi
 from Products.Archetypes.Widget import SelectionWidget
@@ -88,6 +89,21 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
         relationship="targetFolder",
         allowed_types=("Folder",),
         multiValued=False
+    ),
+    atapi.BooleanField(
+        "giveOwnership",
+        required=False,
+        write_permission=ModifyPortalContent,
+        read_permission=ModifyPortalContent,
+        storage=atapi.AnnotationStorage(),
+        searchable=False,
+        widget=atapi.BooleanWidget(
+            label=_(u"Give ownership"),
+            description=_((u"Select this to transfer the ownership of "
+                           u"created content to the logged-in user. "
+                           u"This has no effect for anonymous users."))
+        ),
+        default=False
     ),
     DataGridField(
         "fieldMapping",
@@ -177,14 +193,21 @@ DexterityContentAdapterSchema["description"].storage =\
     atapi.AnnotationStorage()
 
 
-def unrestricted(func):
-    """Decorator for executing actions as unrestricted user"""
-    def wrapper(self, *args, **kwargs):
+def as_owner(func):
+    """Decorator for executing actions as the context owner"""
+
+    @ram.cache(lambda method, context, owner: (owner.getId(), time() // 60))
+    def wrapped(context, owner):
+        users = context.getPhysicalRoot().restrictedTraverse(
+            getToolByName(context, "acl_users").getPhysicalPath())
+        return owner.__of__(users)
+
+    def wrapper(context, *args, **kwargs):
+        owner = IOwned(context).getOwner()  # get the owner
         old_security_manager = getSecurityManager()
-        newSecurityManager(
-            None, UnrestrictedUser("manager", "", ["Manager"], []))
+        newSecurityManager(getRequest(), wrapped(context, owner))
         try:
-            return func(self, *args, **kwargs)
+            return func(context, *args, **kwargs)
         except ConflictError:
             raise
         finally:
@@ -196,6 +219,8 @@ def unrestricted(func):
 class DexterityContentAdapter(FormActionAdapter):
     """Dexterity content creation adapter for PloneFormGen"""
     implements(IPloneFormGenActionAdapter, IDexterityContentAdapter)
+
+    security = ClassSecurityInfo()
 
     portal_type = "Dexterity Content Adapter"
     schema = DexterityContentAdapterSchema
@@ -210,35 +235,66 @@ class DexterityContentAdapter(FormActionAdapter):
     fieldMapping = atapi.ATFieldProperty("fieldMapping")
     workflowTransition = atapi.ATFieldProperty("workflowTransition")
 
-    @property
-    def default_encoding(self):
-        ptool = getToolByName(self, "portal_properties")
+    @as_owner
+    def _createAsOwner(self, targetFolder, createdType, **kw):
+        return createContentInContainer(
+            targetFolder, createdType, checkConstraints=True, **kw)
+
+    @as_owner
+    def _deleteAsOwner(self, container, obj):
+        container.manage_delObjects([obj.getId()])
+
+    @as_owner
+    def _setAsOwner(self, context, field, value):
+        # Try to set the value on creted object
         try:
-            return ptool.get("site_properties").default_charset
+            # 1) Try to set it directly
+            bound_field = field.bind(context)
+            bound_field.validate(value)
+            bound_field.set(context, value)
         except ConflictError:
             raise
-        except:
-            return "utf-8"
+        except Exception, e:
+            try:
+                # 2) Try your luck with z3c.form adapters
+                widget = getMultiAdapter((field, getRequest()), IFieldWidget)
+                converter = IDataConverter(widget)
+                dm = getMultiAdapter((context, field), IDataManager)
+                dm.set(converter.toFieldValue(value))
+            except ConflictError:
+                raise
+            except Exception:
+                LOG.error(e)
+                return u"An unexpected error: %s" % e
 
-    @unrestricted
-    def onSuccess(self, fields, REQUEST=None):
-        createdType = self.getCreatedType()
-        targetFolder = self.getTargetFolder()
-        fieldMapping = self.getFieldMapping()
-        workflowTransition = self.getWorkflowTransition()
-
+    @as_owner
+    def _doActionAsOwner(self, wftool, context, transition):
         try:
-            # README: id for new content will be choosed by
-            # INameChooser(container).chooseName(None, object),
-            # so you should provide e.g. INameFromTitle adapter
-            # to generate a custom id
-            context = createContentInContainer(
-                targetFolder, createdType, checkConstraints=True)
+            wftool.doActionFor(context, transition)
         except ConflictError:
             raise
         except Exception, e:
             LOG.error(e)
-            return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
+            return u"An unexpected error: %s" % e
+
+    @as_owner
+    def _reindexAsOwner(self, context):
+        context.reindexObject()
+
+    security.declarePublic("onSuccess")
+    def onSuccess(self, fields, REQUEST=None):
+        createdType = self.getCreatedType()
+        targetFolder = self.getTargetFolder()
+        fieldMapping = self.getFieldMapping()
+        giveOwnership = self.getGiveOwnership()
+        workflowTransition = self.getWorkflowTransition()
+
+        values = {}
+
+        plone_utils = getToolByName(self, "plone_utils")
+        site_encoding = plone_utils.getSiteEncoding()
+
+        # Parse values from the submission
 
         alsoProvides(REQUEST, IFormLayer)  # let us to find z3c.form adapters
         for mapping in fieldMapping:
@@ -250,8 +306,7 @@ class DexterityContentAdapter(FormActionAdapter):
                 value = REQUEST.get(mapping["form"], None)
                 # Convert strings to unicode
                 if isinstance(value, str):
-                    value = unicode(value, self.default_encoding,
-                                    errors="ignore")
+                    value = unicode(value, site_encoding, errors="replace")
 
             # Convert datetimes to collective.z3cform.datetime-compatible
             if isinstance(field, Datetime):
@@ -260,59 +315,76 @@ class DexterityContentAdapter(FormActionAdapter):
             # XXX: Here we apply a few controversial convenience heuristics
             if isinstance(field, TextLine):
                 # 1) Multiple text lines into the same field
-                try:
-                    old_value = field.get(context)
-                except AttributeError:
-                    old_value = None
+                old_value = values.get(mapping["content"])
                 if old_value and value:
-                    value = u" ".join((old_value, value))
+                    value = u" ".join((old_value[1], value))
+
             elif isinstance(field, List) and isinstance(value, unicode):
                 # 2) Split keyword (just a guess) string into list
                 value = value.replace(u",", u"\n")
                 value = [s.strip() for s in value.split(u"\n") if s]
 
-            # Try to set the value on creted object
-            try:
-                # 1) Try to set it directly
-                bound_field = field.bind(context)
-                bound_field.validate(value)
-                bound_field.set(context, value)
-            except ConflictError:
-                raise
-            except Exception, e:
-                try:
-                    # 2) Try your luck with z3c.form adapters
-                    widget = getMultiAdapter((field, REQUEST), IFieldWidget)
-                    converter = IDataConverter(widget)
-                    dm = getMultiAdapter((context, field), IDataManager)
-                    dm.set(converter.toFieldValue(value))
-                except ConflictError:
-                    raise
-                except Exception:
-                    LOG.error(e)
-                    # Setting value failed, remove incomplete submission
-                    targetFolder.manage_delObjects([context.getId()])
-                    return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
+            values[mapping["content"]] = (field, value)
+
+        # Create content with parsed title (or without it)
+
+        try:
+            # README: id for new content will be choosed by
+            # INameChooser(container).chooseName(None, object),
+            # so you should provide e.g. INameFromTitle adapter
+            # to generate a custom id
+            if "title" in values:
+                context = self._createAsOwner(targetFolder, createdType,
+                                              title=values.pop("title")[1])
+            else:
+                context = self._createAsOwner(targetFolder, createdType)
+        except ConflictError:
+            raise
+        except Exception, e:
+            LOG.error(e)
+            return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
+
+        # Set all parsed values for the created content
+
+        for field, value in values.values():
+            error_msg = self._setAsOwner(context, field, value)
+            if error_msg:
+                self._deleteAsOwner(targetFolder, context)
+                return {FORM_ERROR_MARKER: error_msg}
+
+        # Give ownership for the logged-in submitter, when that's enabled
+
+        if giveOwnership:
+            mtool = getToolByName(self, "portal_membership")
+            if not mtool.isAnonymousUser():
+                member = mtool.getAuthenticatedMember()
+                if "creators" in context.__dict__:
+                    context.creators = (member.getId(),)
+                IOwned(context).changeOwnership(member.getUser(), recursive=0)
+                context.manage_setLocalRoles(member.getId(), ["Owner",])
+
+        # Trigger a worklfow transition when set
 
         if workflowTransition:
             wftool = getToolByName(self, "portal_workflow")
-            try:
-                wftool.doActionFor(context, workflowTransition)
-            except ConflictError:
-                raise
-            except Exception, e:
-                # Transition failed, remove incomplete submission
-                targetFolder.manage_delObjects([context.getId()])
-                return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
+            error_msg = self._doActionAsOwner(wftool, context,
+                                              workflowTransition)
+            if error_msg:
+                self._deleteAsOwner(targetFolder, context)
+                return {FORM_ERROR_MARKER: error_msg}
 
-        context.reindexObject()
+        # Reindex at the end
 
+        self._reindexAsOwner(context)
+
+    security.declarePrivate("listTypes")
     def listTypes(self):
         types = getToolByName(self, "portal_types")
         dexterity = [(fti.id, fti.title) for fti in types.values()
                      if IDexterityFTI.providedBy(fti)]
         return atapi.DisplayList(dexterity)
 
+    security.declarePrivate("listFormFields")
     def listFormFields(self):
         fields = [(obj.getId(), obj.title_or_id())
                   for obj in self.aq_parent.objectValues()\
@@ -342,6 +414,7 @@ class DexterityContentAdapter(FormActionAdapter):
     def _getDexterityField(self, portal_type, name):
         return self._getDexterityFields(portal_type).get(name, None)
 
+    security.declarePrivate("listContentFields")
     def listContentFields(self):
         types = getToolByName(self, "portal_types")
         createdType = self.getCreatedType()
@@ -352,6 +425,7 @@ class DexterityContentAdapter(FormActionAdapter):
             fields = []
         return atapi.DisplayList(fields)
 
+    security.declarePrivate("listTransitions")
     def listTransitions(self):
         types = getToolByName(self, "portal_types")
         createdType = self.getCreatedType()
@@ -377,5 +451,3 @@ class DexterityContentAdapter(FormActionAdapter):
                                                    y[1].lower())))
 
 atapi.registerType(DexterityContentAdapter, PROJECTNAME)
-
-unrestricted = None  # hide our unholy decorator

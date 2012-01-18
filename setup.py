@@ -25,7 +25,7 @@ setup(name="collective.pfg.dexterity",
       zip_safe=False,
       install_requires=[
         "setuptools",
-        "plone.principalsource",
+        "five.globalrequest",
         "plone.app.dexterity",
         "Products.PloneFormGen",
         "Products.DataGridField",
