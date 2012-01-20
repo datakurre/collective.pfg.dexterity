@@ -13,6 +13,7 @@ from zope.schema import TextLine, List, Datetime
 from zope.schema.interfaces import IVocabularyFactory
 from zope.globalrequest import getRequest
 from zope.interface import implements, alsoProvides
+from zope.annotation.interfaces import IAnnotations
 
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
@@ -89,7 +90,8 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
                                    u"new content should be placed. Please, "
                                    u"make sure that the folder allows adding "
                                    u"content of the selected type.")),
-            base_query={"portal_type": "Folder"},
+            base_query={"portal_type": ("Folder",
+                                        "Dexterity Content Adapter")},
         ),
         relationship="targetFolder",
         allowed_types=("Folder",),
@@ -178,50 +180,8 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
                                    u"filled with the URL of the created "
                                    u"content. The field may be hidden on "
                                    u"the original form."))
-        ),
-    ),
-    ### TODO: I've been thinking about enhancing this adapter to be able
-    ### to 1) first create a container and 2) then add file types into that
-    ### container. Although, this has been delayed, since I'm not yet
-    ### convinced, if that's really a good idea.
-    #
-    # atapi.StringField(
-    #     "containedType",
-    #     required=False,
-    #     write_permission=ModifyPortalContent,
-    #     read_permission=ModifyPortalContent,
-    #     storage=atapi.AnnotationStorage(),
-    #     searchable=False,
-    #     vocabulary="listNamedfileTypes",
-    #     widget=SelectionWidget(
-    #         label=_("contained_type_lable",
-    #                 default=u"Attachment Content type"),
-    #         description=_("contained_type_help",
-    #                       default=(u"When the selected content type to be "
-    #                                u"created is a container type and the form "
-    #                                u"contains file fields, you may select "
-    #                                u"a separate type for adding those files "
-    #                                u"inside the container."))
-    #     ),
-    # ),
-    # atapi.StringField(
-    #     "containedWorkflowTransition",
-    #     required=False,
-    #     storage=atapi.AnnotationStorage(),
-    #     searchable=False,
-    #     vocabulary="listNamedfileTransitions",
-    #     widget=SelectionWidget(
-    #         label=_("contained_workflow_transition_label",
-    #                 default=u"Trigger attachment's workflow transition"),
-    #         description=_("contained_workflow_transition_help",
-    #                       default=(u"You may select a workflow transition "
-    #                                u"to be triggered after new file is added "
-    #                                u"into the container. The selected "
-    #                                u"transition will be triggered only "
-    #                                u"after the selected transition for "
-    #                                u"the container has been triggered."))
-    #     ),
-    # ),
+        )
+    )
 ))
 finalizeATCTSchema(DexterityContentAdapterSchema)
 
@@ -328,6 +288,17 @@ class DexterityContentAdapter(FormActionAdapter):
         workflowTransition = self.getWorkflowTransition()
         urlField = self.getCreatedURL()
 
+        # Support for content adapter chaining
+        annotations = IAnnotations(REQUEST)
+        if targetFolder.portal_type == "Dexterity Content Adapter":
+            targetFolder =\
+                annotations["collective.pfg.dexterity"][targetFolder.getId()]
+            # TODO: ^ We should fail more gracefully when the annotation
+            # doesn't exist, but now we just let the transaction fail
+            # and 500 Internal Error to be returned. (That's because a
+            # previous adapter may have created content and we don't want
+            # it to be persisted.)
+
         values = {}
 
         plone_utils = getToolByName(self, "plone_utils")
@@ -395,7 +366,7 @@ class DexterityContentAdapter(FormActionAdapter):
                 if "creators" in context.__dict__:
                     context.creators = (member.getId(),)
                 IOwned(context).changeOwnership(member.getUser(), recursive=0)
-                context.manage_setLocalRoles(member.getId(), ["Owner",])
+                context.manage_setLocalRoles(member.getId(), ["Owner", ])
 
         # Trigger a worklfow transition when set
         if workflowTransition:
@@ -412,6 +383,11 @@ class DexterityContentAdapter(FormActionAdapter):
         # Set URL to the created content
         if urlField:
             REQUEST.form[urlField] = context.absolute_url()
+
+        # Store created content also as an annotation
+        if not "collective.pfg.dexterity" in annotations:
+            annotations["collective.pfg.dexterity"] = {}
+        annotations["collective.pfg.dexterity"][self.getId()] = context
 
     security.declarePrivate("listTypes")
     def listTypes(self):

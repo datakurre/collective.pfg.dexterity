@@ -8,6 +8,10 @@ Dexterity content types must be defined by other packages or be created using
 the dexterity schema editor, but otherwise the installed *Content Adapter* can
 be used as a part of existing PloneFormGen adapter chains.
 
+Also *Content Adapters* can be chained: the first adapter can be used to
+create a folder and selecting the adapter as a target folder for the next
+adapter, it will try to create content below that newly created folder.
+
 When the form is published, also visitors may create content by submitting it.
 
 By default the content is created using the permissions of the owner of the
