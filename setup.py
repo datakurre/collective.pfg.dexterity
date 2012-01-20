@@ -28,7 +28,7 @@ setup(name="collective.pfg.dexterity",
         "five.globalrequest",
         "plone.app.dexterity",
         "Products.PloneFormGen",
-        "Products.DataGridField",
+        "Products.DataGridField>=1.8b1",
       ],
       extras_require = {"test": ["corejet.core", "plone.app.testing"]},
       entry_points="""

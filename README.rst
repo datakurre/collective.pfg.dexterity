@@ -31,10 +31,6 @@ This product may not yet support all of the PloneFormGen's or Dexterity's
 fields. If you like the idea and think this could be useful, please,
 contribute at: https://github.com/datakurre/collective.pfg.dexterity
 
-**Note:** Depending on your buildout configuration, you may need to manually
-pin `Products.DataGridField >= 1.8b1` to avoid getting a Plone 3.x -version of
-that dependency.
-
 P.S. If you find it redundant to first create a PloneFormGen-form and then
 define a similar dexterity content type, check out if `uwosh.pfg.d2c
 <http://pypi.python.org/pypi/uwosh.pfg.d2c>`_ is a better fit for you.
