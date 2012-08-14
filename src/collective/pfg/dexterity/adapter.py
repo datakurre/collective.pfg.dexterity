@@ -9,7 +9,7 @@ from time import time
 from ZODB.POSException import ConflictError
 
 from zope.component import getMultiAdapter, getUtility, queryUtility
-from zope.schema import TextLine, List, Datetime
+from zope.schema import TextLine, List, Datetime, Date
 from zope.schema.interfaces import IVocabularyFactory
 from zope.globalrequest import getRequest
 from zope.interface import implements, alsoProvides
@@ -320,6 +320,10 @@ class DexterityContentAdapter(FormActionAdapter):
             # Convert datetimes to collective.z3cform.datetime-compatible
             if isinstance(field, Datetime):
                 value = re.compile("\d+").findall(value)
+
+            # Convert datetimes to collective.z3cform.date-compatible
+            if isinstance(field, Date):
+                value = re.compile("\d+").findall(value[:10]) # YYYY-MM-DD
 
             # Apply a few controversial convenience heuristics
             if isinstance(field, TextLine) and isinstance(value, unicode):
