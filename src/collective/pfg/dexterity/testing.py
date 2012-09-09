@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
+"""Testing layers and keywords"""
+
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import PLONE_FIXTURE
-from plone.app.testing import IntegrationTesting, FunctionalTesting
+from plone.app.testing import (
+    IntegrationTesting,
+    FunctionalTesting
+)
 
 from plone.testing import z2
 
 
-class Fixture(PloneSandboxLayer):
+class Layer(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
@@ -39,9 +44,24 @@ class Fixture(PloneSandboxLayer):
         z2.uninstallProduct(app, "Products.DataGridField")
         z2.uninstallProduct(app, "Products.PloneFormGen")
 
-FIXTURE = Fixture()
+FIXTURE = Layer()
+
 
 INTEGRATION_TESTING = IntegrationTesting(
-    bases=(FIXTURE,), name="Fixture:Integration")
+    bases=(FIXTURE,), name="Integration")
 FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(FIXTURE,), name="Fixture:Functional")
+    bases=(FIXTURE,), name="Functional")
+ACCEPTANCE_TESTING = FunctionalTesting(
+    bases=(FIXTURE, z2.ZSERVER_FIXTURE), name="Acceptance")
+
+
+class Keywords(object):
+    """Robot Framework keyword library"""
+
+    def get_test_user_name(self):
+        import plone.app.testing
+        return plone.app.testing.interfaces.TEST_USER_NAME
+
+    def get_test_user_password(self):
+        import plone.app.testing
+        return plone.app.testing.interfaces.TEST_USER_PASSWORD

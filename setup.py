@@ -38,7 +38,9 @@ setup(
             "corejet.core",
             "corejet.pivotal",
             "plone.testing",
-            "plone.app.testing"
+            "plone.app.testing",
+            "robotsuite",
+            "robotframework-selenium2library",
         ]
     },
     entry_points="""
