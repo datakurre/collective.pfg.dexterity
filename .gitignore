@@ -1,4 +1,11 @@
-collective.pfg.dexterity.egg-info/
-dist/
+syntax: glob
+
+bin
+develop-eggs
+parts
+
 *.pyc
 *.mo
+*.egg-info
+
+.installed.cfg
