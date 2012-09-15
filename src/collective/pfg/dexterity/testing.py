@@ -53,15 +53,3 @@ FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(FIXTURE,), name="Functional")
 ACCEPTANCE_TESTING = FunctionalTesting(
     bases=(FIXTURE, z2.ZSERVER_FIXTURE), name="Acceptance")
-
-
-class Keywords(object):
-    """Robot Framework keyword library"""
-
-    def get_test_user_name(self):
-        import plone.app.testing
-        return plone.app.testing.interfaces.TEST_USER_NAME
-
-    def get_test_user_password(self):
-        import plone.app.testing
-        return plone.app.testing.interfaces.TEST_USER_PASSWORD

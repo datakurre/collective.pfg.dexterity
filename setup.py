@@ -32,13 +32,14 @@ setup(
         "Products.DataGridField>=1.8b1",
     ],
     extras_require={"test": [
-        "Pillow",
         "corejet.core",
         "corejet.pivotal",
+        "Pillow",
         "plone.testing",
         "plone.app.testing",
         "robotsuite",
         "robotframework-selenium2library",
+        "plone.act",
     ]},
     entry_points="""
     # -*- Entry points: -*-

@@ -1,7 +1,7 @@
 *** Settings ***
 
 Library  Selenium2Library  timeout=10  implicit_wait=0.5
-Library  collective.pfg.dexterity.testing.Keywords
+Library  plone.act.PloneLibrary
 
 Suite Setup  Start browser
 Suite Teardown  Close All Browsers
@@ -9,8 +9,9 @@ Suite Teardown  Close All Browsers
 *** Test Cases ***
 
 Log in
-    ${TEST_USER_NAME} =  Get test user name
-    ${TEST_USER_PASSWORD} =  Get test user password
+    [Tags]  current
+    ${TEST_USER_NAME} =  Get site owner name
+    ${TEST_USER_PASSWORD} =  Get site owner password
     Go to  http://localhost:55001/plone/login_form
     Page should contain element  __ac_name
     Input text  __ac_name  ${TEST_USER_NAME}
