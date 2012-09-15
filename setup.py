@@ -2,19 +2,18 @@
 """collective.pfg.dexterity"""
 from setuptools import setup, find_packages
 
-version = "0.5.0"
-
 setup(
     name="collective.pfg.dexterity",
-    version=version,
+    version="0.5.0",
     description="Installs dexterity content creation adapter for PloneFormGen",
-    long_description=open("README.rst").read() + "\n" +
-                     open("HISTORY.txt").read(),
-    # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
+    long_description=(open("README.rst").read() + "\n" +
+                      open("CHANGES.txt").read()),
+    # Get more strings from
+    # http://www.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        ],
+    ],
     keywords="",
     author="Asko Soukka",
     author_email="asko.soukka@iki.fi",
@@ -32,20 +31,18 @@ setup(
         "Products.PloneFormGen",
         "Products.DataGridField>=1.8b1",
     ],
-    extras_require={
-        "test": [
-            "Pillow",
-            "corejet.core",
-            "corejet.pivotal",
-            "plone.testing",
-            "plone.app.testing",
-            "robotsuite",
-            "robotframework-selenium2library",
-        ]
-    },
+    extras_require={"test": [
+        "Pillow",
+        "corejet.core",
+        "corejet.pivotal",
+        "plone.testing",
+        "plone.app.testing",
+        "robotsuite",
+        "robotframework-selenium2library",
+    ]},
     entry_points="""
     # -*- Entry points: -*-
     [z3c.autoinclude.plugin]
     target = plone
     """,
-    )
+)
