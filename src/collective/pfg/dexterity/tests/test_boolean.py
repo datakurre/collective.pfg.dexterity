@@ -108,7 +108,7 @@ class Story(unittest.TestCase):
                 u"This is a test",
                 u"Created ticket had wrong description.")
 
-        @then("It has boolean field filled")
+        @then("It has the boolean field filled")
         def thenB(self):
             self.assertTrue(self.portal["tracker"]["ticket"].important,
                 u"The boolean field was not filled.")

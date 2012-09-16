@@ -1,25 +1,148 @@
 *** Settings ***
 
+Meta: Id  36107035
+Meta: Title  As a 'Site Administrator' I want to save submissions with date values
+
 Library  Selenium2Library  timeout=10  implicit_wait=0.5
 Library  plone.act.PloneLibrary
+Library  collective.pfg.dexterity.testing.Keywords
 
-Suite Setup  Start browser
+Resource  plone/act/plone.txt
+
+Suite Setup  Run keywords  Start browser  Background
 Suite Teardown  Close All Browsers
-
-*** Test Cases ***
-
-Log in
-    [Tags]  current
-    ${TEST_USER_NAME} =  Get site owner name
-    ${TEST_USER_PASSWORD} =  Get site owner password
-    Go to  http://localhost:55001/plone/login_form
-    Page should contain element  __ac_name
-    Input text  __ac_name  ${TEST_USER_NAME}
-    Input text  __ac_password  ${TEST_USER_PASSWORD}
-    Click Button  Log in
-    Page should contain element  css=#user-name
 
 *** Keywords ***
 
 Start browser
-    Open browser  http://localhost:55001/plone/
+    Open browser  ${PLONE_URL}
+
+Background
+    Given 'Form Folder' is installed
+    And 'Content Adapter' is installed
+
+'${product}' is installed
+    Product is installed  ${product}
+
+There's a content type with a date field
+    Create type with date field  Ticket
+
+There's a published form with a date field
+    Login as site owner
+    Go to  ${PLONE_URL}
+
+    # Add a new Form FOlder
+    Open add new menu
+    Click link  css=#plone-contentmenu-factories a#formfolder
+    Input text  title  Send Request
+    Click button  form.button.save
+
+    # Delete 'replyto' field (included by default) from the created Form Folder
+    Go to  ${PLONE_URL}/send-request/replyto
+    Open action menu
+    Click link  css=a#delete
+    Click button  Delete
+    Page should not contain button  Delete
+
+    # Disable mailer adapter on the form
+    Go to  ${PLONE_URL}/send-request/edit
+    Unselect checkbox  actionAdapter_1
+    Click button  form.button.save
+
+    # Add a date field
+    Open add new menu
+    Click link  css=#plone-contentmenu-factories a#formdatefield
+    Input text  title  Due Date
+    Click button  form.button.save
+
+    # Publish the form
+    Go to  ${PLONE_URL}/send-request
+    Open workflow menu
+    Click link  css=a#workflow-transition-publish
+    Page should contain  Item state changed.
+
+    Log out
+
+The form has properly configured 'Content Adapter'
+    Login as site owner
+
+    # Create a folder for 'Content Adapter' to create content into
+    Go to  ${PLONE_URL}
+    Open add new menu
+    Click link  css=#plone-contentmenu-factories a#folder
+    Input text  title  Tracker
+    Click button  form.button.save
+
+    # Add a new content adapter into the created Form Folder
+    Go to  ${PLONE_URL}/send-request
+    Open add new menu
+    Click link  css=#plone-contentmenu-factories a#dexterity-content-adapter
+    Input text  title  Ticket machine
+
+    # Configure it to created Ticket-types
+    Select radio button  createdType  Ticket
+    Click button  Add...
+    Click link  css=.overlay a[rel='Home']
+    Click element  css=.overlay input[type='checkbox']
+    Click button  form.button.save
+
+    # Map form fields to Ticket-content one field at time
+
+    Go to  ${PLONE_URL}/send-request/ticket-machine/edit
+    Click link  Add new row
+    Select from list  css=select#form_fieldMapping_new  topic
+    Select from list  css=select#content_fieldMapping_new  title
+    Click button  form.button.save
+
+    Go to  ${PLONE_URL}/send-request/ticket-machine/edit
+    Click link  Add new row
+    Select from list  css=select#form_fieldMapping_new  comments
+    Select from list  css=select#content_fieldMapping_new  description
+    Click button  form.button.save
+
+    Go to  ${PLONE_URL}/send-request/ticket-machine/edit
+    Click link  Add new row
+    Select from list  css=select#form_fieldMapping_new  due-date
+    Select from list  css=select#content_fieldMapping_new  duedate
+
+    # Configure adapter to submit the created content
+    Select radio button  workflowTransition  submit
+    Click button  form.button.save
+
+    Log out
+
+I submit the form as an 'Anonymous User'
+    Go to  ${PLONE_URL}/send-request
+
+    Input text  topic  A ticket
+    Input text  comments  Something important
+    Select from list  due-date_year  2013
+    Select from list  due-date_month  01
+    Select from list  due-date_day  01
+
+    Click button  form_submit
+
+A content object is created
+    Login as site owner
+    Go to  ${PLONE_URL}/tracker
+    Capture page screenshot
+
+    Log out
+
+It has the date field filled
+    Login as site owner
+
+    Go to  ${PLONE_URL}/tracker/ticket
+    Element text should be  css=.date-field#form-widgets-duedate  1/1/13
+
+    Log out
+
+*** Test Cases ***
+
+Date field is supported
+    Given There's a content type with a date field
+    And There's a published form with a date field
+    And The form has properly configured 'Content Adapter'
+    When I submit the form as an 'Anonymous User'
+    Then A content object is created
+    And it has the date field filled

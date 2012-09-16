@@ -53,3 +53,45 @@ FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(FIXTURE,), name="Functional")
 ACCEPTANCE_TESTING = FunctionalTesting(
     bases=(FIXTURE, z2.ZSERVER_FIXTURE), name="Acceptance")
+
+
+class Keywords(object):
+    """Robot Framework keyword library"""
+
+    def product_is_installed(self, name):
+        from plone import api
+        portal = api.portal.get()
+        portal._p_jar.sync()
+
+        ids = portal.portal_types.objectIds()
+        titles = map(lambda x: x.title, portal.portal_types.objectValues())
+
+        assert name in ids + titles,\
+            u"'%s' was not found in portal types." % name
+
+        import transaction
+        transaction.commit()
+
+    def create_type_with_date_field(self, name):
+        from plone.dexterity.fti import DexterityFTI
+        fti = DexterityFTI(str(name), title=name)
+        fti.behaviors = ("plone.app.dexterity.behaviors.metadata.IBasic",)
+        fti.model_source = u"""\
+<model xmlns="http://namespaces.plone.org/supermodel/schema">
+<schema>
+<field name="duedate" type="zope.schema.Date">
+  <description />
+  <required>False</required>
+  <title>Due Date</title>
+</field>
+</schema>
+</model>"""
+
+        from plone import api
+        portal = api.portal.get()
+        portal._p_jar.sync()
+
+        portal.portal_types._setObject(str(name), fti)
+
+        import transaction
+        transaction.commit()

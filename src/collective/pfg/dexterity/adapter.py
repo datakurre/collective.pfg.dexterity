@@ -109,7 +109,7 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
                     default=u"Give ownership"),
             description=_("give_ownership_help",
                           default=(u"Select this to transfer the ownership of "
-                                   u"created content to the logged-in user. "
+                                   u"created content for the logged-in user. "
                                    u"This has no effect for anonymous users."))
         ),
         default=False

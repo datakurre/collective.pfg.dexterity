@@ -34,11 +34,13 @@ setup(
     extras_require={"test": [
         "corejet.core",
         "corejet.pivotal",
+        "corejet.robot",
         "Pillow",
         "plone.testing",
         "plone.app.testing",
         "robotsuite",
         "robotframework-selenium2library",
+        "plone.api",
         "plone.act",
     ]},
     entry_points="""
