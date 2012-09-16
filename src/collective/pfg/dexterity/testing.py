@@ -44,6 +44,15 @@ class Layer(PloneSandboxLayer):
         z2.uninstallProduct(app, "Products.DataGridField")
         z2.uninstallProduct(app, "Products.PloneFormGen")
 
+    def testSetUp(self):
+        # XXX: How should we invalidate Dexterity fti.lookupSchema() cache?
+        import plone.dexterity.schema
+        for name in dir(plone.dexterity.schema.generated):
+            if name.startswith("plone"):
+                delattr(plone.dexterity.schema.generated, name)
+        plone.dexterity.schema.SCHEMA_CACHE.clear()
+
+
 FIXTURE = Layer()
 
 

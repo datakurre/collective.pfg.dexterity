@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""CoreJet tests"""
+"""CoreJet test"""
 import unittest2 as unittest
 from corejet.core import Scenario, story, scenario, given, when, then
 
@@ -24,7 +24,7 @@ class Story(unittest.TestCase):
     @given(u"'Form Folder' is installed")
     def givenA(self):
         self.assertIn("FormFolder", self.portal.portal_types.objectIds(),
-            u"'FormFolder' was not found in portal types.")
+                      u"'FormFolder' was not found in portal types.")
 
     @given(u"'Content Adapter' is installed")
     def givenB(self):
@@ -90,25 +90,31 @@ class Story(unittest.TestCase):
             browser = z2.Browser(self.layer["app"])
             browser.open(self.portal.absolute_url() + "/feedback")
             self.assertIn("Log in", browser.contents,
-                (u"I couldn't support form as 'Anonymous User', "
-                 u"because I was already logged in."))
+                          (u"I couldn't support form as 'Anonymous User', "
+                           u"because I was already logged in."))
 
             browser.getControl("Subject").value = u"Sample ticket"
             browser.getControl("Comments").value = u"This is a test"
             browser.getControl("This is important").click()
             browser.getControl("Submit").click()
 
+            self.assertIn("Thanks for your input.", browser.contents,
+                          ("No 'Thanks for your input.' found "
+                           "after submitting the form."))
+
         @then("A content object is created")
         def thenA(self):
+            self.portal._p_jar.sync()
             self.assertIn("ticket", self.portal["tracker"],
-                u"Ticket was not created by submitting the form.")
+                          u"Ticket was not created by submitting the form.")
             self.assertEqual(self.portal["tracker"]["ticket"].title,
-                u"Sample ticket", u"Created ticket had wrong title.")
+                             u"Sample ticket",
+                             u"Created ticket had wrong title.")
             self.assertEqual(self.portal["tracker"]["ticket"].description,
-                u"This is a test",
-                u"Created ticket had wrong description.")
+                             u"This is a test",
+                             u"Created ticket had wrong description.")
 
         @then("It has the boolean field filled")
         def thenB(self):
             self.assertTrue(self.portal["tracker"]["ticket"].important,
-                u"The boolean field was not filled.")
+                            u"The boolean field was not filled.")
