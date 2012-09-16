@@ -1,19 +1,19 @@
 Changelog
 =========
 
-0.5.1 – unreleased
+0.6.0 (2012-09-16)
 ------------------
 
 - Support coercing of PFG DateTime fields to zope.schema.Date
   (ajung)
 
-0.5.0 – 2012-01-20
+0.5.0 (2012-01-20)
 ------------------
 
 - Added (hidden) support for adapter chaining to allow creation of
   hierarchical structures.
 
-0.4.0 – 2012-01-18
+0.4.0 (2012-01-18)
 ------------------
 
 - Refactored to masquerade as an owner of the adapter while creating content.
@@ -21,29 +21,28 @@ Changelog
 - Added option to save the URL of the created content onto request, for
   example, to be shown on a thanks page.
 
-0.3.0 – 2011-09-09
+0.3.0 (2011-09-09)
 ------------------
 
 - Updated heuristics in adapting PFG values for zope.schema.
   More field combinations should work now.
 
-0.2.3 – 2011-09-07
+0.2.3 (2011-09-07)
 ------------------
 
 - Added French translation (bklups).
 
-0.2.2 – 2011-09-06
+0.2.2 (2011-09-06)
 ------------------
 
 - Fixed broken package.
 
-0.2.1 – 2011-09-05
+0.2.1 (2011-09-05)
 ------------------
 
 - Uses z3c.form adapters to convert data from request to field value.
 
-0.1.0 – 2011-08-28
+0.1.0 (2011-08-28)
 ------------------
 
 - Proof of concept
-
