@@ -40,4 +40,4 @@ define a similar dexterity content type, check out if `uwosh.pfg.d2c
 <http://pypi.python.org/pypi/uwosh.pfg.d2c>`_ is a better fit for you.
 
 .. image:: https://secure.travis-ci.org/datakurre/collective.pfg.dexterity.png
-    :target: http://travis-ci.org/datakurre/collective.pfg.dexterity
+       :target: http://travis-ci.org/datakurre/collective.pfg.dexterity
