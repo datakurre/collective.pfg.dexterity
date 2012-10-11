@@ -8,4 +8,4 @@ install:
 before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-script: bin/test -t Date_field_is_supported
+script: bin/test
