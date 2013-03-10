@@ -114,10 +114,9 @@ The form has properly configured 'Content Adapter'
     Select radio button  createdType  Ticket
     Click button  Add...
     Click link  css=.overlay a[rel='Home']
+    Page should contain element  css=.overlay input[type='checkbox']
     Click element  css=.overlay input[type='checkbox']
     Click button  form.button.save
-
-    Change ownership  send-request/ticket-machine  admin
 
     # Map form fields to Ticket-content one field at time
 
@@ -141,6 +140,9 @@ The form has properly configured 'Content Adapter'
     # Configure adapter to submit the created content
     Select radio button  workflowTransition  submit
     Click button  form.button.save
+
+    # Enable content creation magic
+    Change ownership  send-request/ticket-machine  admin
 
     Disable autologin
 
