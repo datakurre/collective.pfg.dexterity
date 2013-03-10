@@ -3,32 +3,62 @@
 Meta: Id  36107035
 Meta: Title  As a 'Site Administrator' I want to save submissions with date values
 
+Library  OperatingSystem
 Library  Selenium2Library  timeout=10  implicit_wait=0.5
-Library  plone.act.PloneLibrary
-Library  collective.pfg.dexterity.testing.Keywords
-
-Resource  plone/act/plone.txt
+Library  Remote  ${PLONE_URL}/RemoteKeywordsLibrary
 
 Suite Setup  Run keywords  Start browser  Background
 Suite Teardown  Close All Browsers
 
+*** Variables ***
+
+${ZOPE_HOST} =  localhost
+${ZOPE_PORT} =  55001
+${ZOPE_URL} =  http://${ZOPE_HOST}:${ZOPE_PORT}
+
+${PLONE_SITE_ID} =  plone
+${PLONE_URL} =  ${ZOPE_URL}/${PLONE_SITE_ID}
+
+${BROWSER} =  Firefox
+${REMOTE_URL} =
+${DESIRED_CAPABILITIES} =
+
 *** Keywords ***
 
 Start browser
-    Open browser  ${PLONE_URL}
+    Log  ${REMOTE_URL}
+    Open browser  ${PLONE_URL}  ${BROWSER}
+    ...           remote_url=${REMOTE_URL}
+    ...           desired_capabilities=${DESIRED_CAPABILITIES}
 
 Background
     Given 'Form Folder' is installed
     And 'Content Adapter' is installed
 
-'${product}' is installed
-    Product is installed  ${product}
+'${portal_type}' is installed
+    Portal type is installed  ${portal_type}
+
+Open Menu
+    [Arguments]  ${elementId}
+    Element Should Be Visible  css=dl#${elementId} span
+    Element Should Not Be Visible  css=dl#${elementId} dd.actionMenuContent
+    Click link  css=dl#${elementId} dt.actionMenuHeader a
+    Wait until keyword succeeds  1  5  Element Should Be Visible  css=dl#${elementId} dd.actionMenuContent
+
+Open add new menu
+    Open menu  plone-contentmenu-factories
+
+Open action menu
+    Open menu  plone-contentmenu-actions
+
+Open workflow menu
+    Open menu  plone-contentmenu-workflow
 
 There's a content type with a date field
     Create type with date field  Ticket
 
 There's a published form with a date field
-    Login as site owner
+    Enable autologin as  Site Administrator
     Go to  ${PLONE_URL}
 
     # Add a new Form FOlder
@@ -40,7 +70,8 @@ There's a published form with a date field
     # Delete 'replyto' field (included by default) from the created Form Folder
     Go to  ${PLONE_URL}/send-request/replyto
     Open action menu
-    Click link  css=a#delete
+
+    Click link  css=a#plone-contentmenu-actions-delete
     Click button  Delete
     Page should not contain button  Delete
 
@@ -61,10 +92,10 @@ There's a published form with a date field
     Click link  css=a#workflow-transition-publish
     Page should contain  Item state changed.
 
-    Log out
+    Disable autologin
 
 The form has properly configured 'Content Adapter'
-    Login as site owner
+    Enable autologin as  Site Administrator
 
     # Create a folder for 'Content Adapter' to create content into
     Go to  ${PLONE_URL}
@@ -85,6 +116,8 @@ The form has properly configured 'Content Adapter'
     Click link  css=.overlay a[rel='Home']
     Click element  css=.overlay input[type='checkbox']
     Click button  form.button.save
+
+    Change ownership  send-request/ticket-machine  admin
 
     # Map form fields to Ticket-content one field at time
 
@@ -109,7 +142,7 @@ The form has properly configured 'Content Adapter'
     Select radio button  workflowTransition  submit
     Click button  form.button.save
 
-    Log out
+    Disable autologin
 
 I submit the form as an 'Anonymous User'
     Go to  ${PLONE_URL}/send-request
@@ -121,21 +154,20 @@ I submit the form as an 'Anonymous User'
     Select from list  due-date_day  01
 
     Click button  form_submit
-
-A content object is created
-    Login as site owner
-    Go to  ${PLONE_URL}/tracker
     Capture page screenshot
 
-    Log out
+A content object is created
+    Enable autologin as  Site Administrator
+    Go to  ${PLONE_URL}/tracker
+    Capture page screenshot
+    Disable autologin
+
 
 It has the date field filled
-    Login as site owner
-
+    Enable autologin as  Site Administrator
     Go to  ${PLONE_URL}/tracker/ticket
     Element text should be  css=.date-field#form-widgets-duedate  1/1/13
-
-    Log out
+    Disable autologin
 
 *** Test Cases ***
 

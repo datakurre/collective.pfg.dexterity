@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Testing layers and keywords"""
-
-from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import (
+    FunctionalTesting,
     IntegrationTesting,
-    FunctionalTesting
+    PLONE_FIXTURE,
+    PloneSandboxLayer,
 )
-
 from plone.testing import z2
 
 
@@ -64,43 +61,19 @@ ACCEPTANCE_TESTING = FunctionalTesting(
     bases=(FIXTURE, z2.ZSERVER_FIXTURE), name="Acceptance")
 
 
-class Keywords(object):
-    """Robot Framework keyword library"""
+class RobotLayer(PloneSandboxLayer):
+    defaultBases = (FIXTURE,)
 
-    def product_is_installed(self, name):
-        from plone import api
-        portal = api.portal.get()
-        portal._p_jar.sync()
+    def setUpPloneSite(self, portal):
+        from collective.pfg.dexterity import testing_robot
+        portal._setObject("RemoteKeywordsLibrary",
+                          testing_robot.RemoteKeywordsLibrary())
 
-        ids = portal.portal_types.objectIds()
-        titles = map(lambda x: x.title, portal.portal_types.objectValues())
+    def tearDownPloneSite(self, portal):
+        portal._delObject("RemoteKeywordsLibrary")
 
-        assert name in ids + titles,\
-            u"'%s' was not found in portal types." % name
+ROBOT_FIXTURE = RobotLayer()
 
-        import transaction
-        transaction.commit()
 
-    def create_type_with_date_field(self, name):
-        from plone.dexterity.fti import DexterityFTI
-        fti = DexterityFTI(str(name), title=name)
-        fti.behaviors = ("plone.app.dexterity.behaviors.metadata.IBasic",)
-        fti.model_source = u"""\
-<model xmlns="http://namespaces.plone.org/supermodel/schema">
-<schema>
-<field name="duedate" type="zope.schema.Date">
-  <description />
-  <required>False</required>
-  <title>Due Date</title>
-</field>
-</schema>
-</model>"""
-
-        from plone import api
-        portal = api.portal.get()
-        portal._p_jar.sync()
-
-        portal.portal_types._setObject(str(name), fti)
-
-        import transaction
-        transaction.commit()
+ROBOT_TESTING = FunctionalTesting(
+    bases=(ROBOT_FIXTURE, z2.ZSERVER_FIXTURE), name="Robot")
