@@ -3,23 +3,29 @@ language: python
 python: '2.7'
 
 install:
-- curl -O http://saucelabs.com/downloads/Sauce-Connect-latest.zip
-- unzip Sauce-Connect-latest.zip
-- java -jar Sauce-Connect.jar $SAUCE_USERNAME $SAUCE_ACCESS_KEY &
-- java_pid=$!
+# Buildout Plone:
 - mkdir -p buildout-cache/eggs
 - mkdir -p buildout-cache/downloads
 - python bootstrap.py -c travis.cfg
 - bin/buildout -N -t 3 -c travis.cfg
+# Download Sauce Connect:
+- curl -O http://saucelabs.com/downloads/Sauce-Connect-latest.zip
+- unzip Sauce-Connect-latest.zip
 
 before_script:
-- export ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
+# Start Sauce Connect:
+- java -jar Sauce-Connect.jar $SAUCE_USERNAME $SAUCE_ACCESS_KEY -f CONNECTED &
+- JAVA_PID=$!
+- bash -c "while [ ! -f CONNECTED ]; do sleep 2; done"
 
 script:
+# Run tests:
+- export ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
 - bin/test
 
 after_script:
-- kill $java_pid
+# Stop Sauce Connect:
+- kill $JAVA_PID
 
 env:
   global:
