@@ -13,3 +13,5 @@ dist
 .installed.cfg
 .mr.developer.cfg
 .ropeproject
+
+src/plone.act
