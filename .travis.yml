@@ -14,6 +14,8 @@ install:
 # - export DISPLAY=:99.0
 # - sh -e /etc/init.d/xvfb start
 script: ROBOT_REMOTE_URL = http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub bin/test
+after_script:
+- kill $java_pid
 env:
   global:
   - secure: ! 'DQSpUjZK+gjYwthJIr/1mwuck3RpvubMzQdWvM+k0DDRAbIjhn73o/S7p2gh
