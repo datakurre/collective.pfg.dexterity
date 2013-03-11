@@ -41,3 +41,6 @@ define a similar dexterity content type, check out if `uwosh.pfg.d2c
 
 .. image:: https://secure.travis-ci.org/datakurre/collective.pfg.dexterity.png
        :target: http://travis-ci.org/datakurre/collective.pfg.dexterity
+
+.. image:: https://saucelabs.com/buildstatus/c_pfg_dexterity
+       :target: https://saucelabs.com/u/c_pfg_dexterity
