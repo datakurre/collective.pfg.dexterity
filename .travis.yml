@@ -22,7 +22,8 @@ before_script:
 script:
 # Run tests:
 - export ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
-- export ROBOT_DESIRED_CAPABILITIES=name=\${TEST_NAME}
+- export ROBOT_BROWSER=iexplore
+- export ROBOT_DESIRED_CAPABILITIES=platform:Windows 2012,version:10
 - bin/test
 
 after_script:
