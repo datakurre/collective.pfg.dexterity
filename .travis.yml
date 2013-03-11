@@ -26,6 +26,4 @@ env:
       ENdEgRvpaR1N3KOivBGgMso3KguyYo+ztjXKdpjcEJQFLjOjRi+LwjqfFJ1N
       454AhguEifDkRDX42i4dszyQXRrM5EFfvPyq5pOSa0oYRmgibwY='
   matrix:
-  - ROBOT_BROWSER=firefox
   - ROBOT_BROWSER=internetexplorer
-  - ROBOT_BROWSER=chrome
