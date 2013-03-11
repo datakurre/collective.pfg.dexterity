@@ -54,7 +54,7 @@ Start browser
     Set test variable  ${SESSION_ID}  ${SESSION_ID}
 
 Report test status
-    Report sauce status  ${SESSION_ID}  ${TEST_STATUS}  @{TEST_TAGS}
+    Report sauce status  ${SESSION_ID}  ${TEST_STATUS}  ${TEST_TAGS}
 
 Background
     Given 'Form Folder' is installed
