@@ -8,7 +8,7 @@ Library  Selenium2Library  timeout=10  implicit_wait=0.5
 Library  Remote  ${PLONE_URL}/RemoteKeywordsLibrary
 
 Test Setup  Run keywords  Start browser  Background
-Test Teardown  Close All Browsers
+Test Teardown  Run keywords  Report test status  Close All Browsers
 
 *** Variables ***
 
@@ -21,7 +21,7 @@ ${PLONE_URL} =  ${ZOPE_URL}/${PLONE_SITE_ID}
 
 ${BROWSER} =  Firefox
 ${REMOTE_URL} =
-${BUILD_NUMBER} =  n/a
+${BUILD_NUMBER} =  manual
 ${DESIRED_CAPABILITIES} =
 
 *** Test Cases ***
@@ -43,10 +43,15 @@ Date field is supported
 
 Start browser
     ${BUILD_INFO} =  Set variable
-    ...           build:c.pfg.dexterity-${BUILD_NUMBER},name:${TEST_NAME}
+    ...           build:${BUILD_NUMBER},name:${SUITE_NAME} | ${TEST_NAME}
     Open browser  ${PLONE_URL}  ${BROWSER}
     ...           remote_url=${REMOTE_URL}
     ...           desired_capabilities=${DESIRED_CAPABILITIES},${BUILD_INFO}
+    ${SESSION_ID} =  Get session id
+    Set test variable  ${SESSION_ID}  ${SESSION_ID}
+
+Report test status
+    Report sauce status  ${SESSION_ID}  ${TEST_STATUS}
 
 Background
     Given 'Form Folder' is installed

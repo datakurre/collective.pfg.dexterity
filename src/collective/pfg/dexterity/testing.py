@@ -65,6 +65,12 @@ class RobotLayer(PloneSandboxLayer):
     defaultBases = (FIXTURE,)
 
     def setUpPloneSite(self, portal):
+        # Inject keyword for getting the selenium session id
+        import Selenium2Library
+        Selenium2Library.keywords._browsermanagement.\
+            _BrowserManagementKeywords.get_session_id = lambda self:\
+            self._cache.current.session_id
+        # Inject remote keywords library into site
         from collective.pfg.dexterity import testing_robot
         portal._setObject("RemoteKeywordsLibrary",
                           testing_robot.RemoteKeywordsLibrary())

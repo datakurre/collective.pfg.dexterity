@@ -20,7 +20,7 @@ before_script:
 - bash -c "while [ ! -f CONNECTED ]; do sleep 2; done"
 # Configure build variables
 - export ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
-- export ROBOT_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
+- export ROBOT_BUILD_NUMBER=travis-$TRAVIS_BUILD_NUMBER
 - export ROBOT_BROWSER=internetexplorer
 - export ROBOT_DESIRED_CAPABILITIES="platform:Windows 2012,version:10"
 

@@ -31,6 +31,7 @@ class RemoteKeywordsLibrary(SimpleItem):
         else:
             result['status'] = 'PASS'
             result['return'] = retval
+            result['output'] = retval
         return result
 
     def product_is_activated(self, product_name):
@@ -121,3 +122,29 @@ class RemoteKeywordsLibrary(SimpleItem):
 </schema>
 </model>"""
         self.portal_types._setObject(str(name), fti)
+
+    def report_sauce_status(self, job_id, test_status):
+        import os
+        import httplib
+        import base64
+        try:
+            import json
+            json  # pyflakes
+        except ImportError:
+            import simplejson as json
+
+        username = os.environ.get('SAUCE_USERNAME')
+        access_key = os.environ.get('SAUCE_ACCESS_KEY')
+
+        if not username or not access_key:
+            return u"No Sauce environment variables found. Skipping..."
+
+        token = base64.encodestring('%s:%s' % (username, access_key))[:-1]
+        body = json.dumps({'passed': test_status == 'PASS'})
+
+        connection = httplib.HTTPConnection('saucelabs.com')
+        connection.request('PUT', '/rest/v1/%s/jobs/%s' % (
+            username, job_id), body,
+            headers={'Authorization': 'Basic %s' % token}
+        )
+        return connection.getresponse().status
