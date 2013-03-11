@@ -136,7 +136,7 @@ class RemoteKeywordsLibrary(SimpleItem):
         username = os.environ.get('SAUCE_USERNAME')
         access_key = os.environ.get('SAUCE_ACCESS_KEY')
 
-        if not test_status:
+        if not job_id:
             return u"No Sauce job id found. Skipping..."
         elif not username or not access_key:
             return u"No Sauce environment variables found. Skipping..."
