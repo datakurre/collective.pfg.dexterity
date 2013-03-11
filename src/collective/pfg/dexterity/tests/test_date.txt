@@ -28,11 +28,13 @@ ${SESSION_ID} =
 *** Test Cases ***
 
 Form folder is addable
+    [Tags]  PloneFormGen
     Given I'm logged in as a 'Site Administrator'
      When I go to the front page
      Then I can add a new form folder
 
 Date field is supported
+    [Tags]  PloneFormGen  Adapter
     Given There's a content type with a date field
       And There's a published form with a date field
       And The form has properly configured 'Content Adapter'
@@ -52,7 +54,7 @@ Start browser
     Set test variable  ${SESSION_ID}  ${SESSION_ID}
 
 Report test status
-    Report sauce status  ${SESSION_ID}  ${TEST_STATUS}
+    Report sauce status  ${SESSION_ID}  ${TEST_STATUS}  @{TEST_TAGS}
 
 Background
     Given 'Form Folder' is installed

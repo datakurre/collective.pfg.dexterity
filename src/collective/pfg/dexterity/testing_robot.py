@@ -123,7 +123,7 @@ class RemoteKeywordsLibrary(SimpleItem):
 </model>"""
         self.portal_types._setObject(str(name), fti)
 
-    def report_sauce_status(self, job_id, test_status):
+    def report_sauce_status(self, job_id, test_status, test_tags=[]):
         import os
         import httplib
         import base64
@@ -142,7 +142,8 @@ class RemoteKeywordsLibrary(SimpleItem):
             return u"No Sauce environment variables found. Skipping..."
 
         token = base64.encodestring('%s:%s' % (username, access_key))[:-1]
-        body = json.dumps({'passed': test_status == 'PASS'})
+        body = json.dumps({'passed': test_status == 'PASS',
+                           'tags': test_tags})
 
         connection = httplib.HTTPConnection('saucelabs.com')
         connection.request('PUT', '/rest/v1/%s/jobs/%s' % (
