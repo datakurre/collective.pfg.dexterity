@@ -20,16 +20,12 @@ after_script:
 - kill $JAVA_PID
 env:
   global:
-  - secure: ! 'bp0lyZetHd1D5sCcQzCMc138D8LKjDwSdhJyd7GLNaLydvtAVTJhl9qLqJcH
-
-      +KwimkkzvsDSZcLqy99eaCp7aqXbQ9NTdB/qWqFF/T4tkzysGb0tRjHYQWpv
-
-      /ZlWKJH24JKtvER8G+b5NnaBFArqz4LkyFFv7e2a3z398QimpXQ='
-  - secure: ! 'Ji3kP+Q/r7xtLdGw502QtTZjlh7qEsXpHOoo5diG6eIyZuPrOK0tWcX8m10c
-
-      aUlenrjzumXSzjQrOtleGr4JuMWtf1n+/H3fzcHgYwyPfTZte2zV+S+M3yDT
-
-      7rBRfiMbCPsM4UmU5FHmxC+BTnLLxpoTaSgwxzp7UNuJRhiiZwk='
+  - secure: ! 'KbsLZUkc4lQVyquo1lsn9Na0r9RpJKYRaib8yO8KU0nGpUSbVO9LBDEaXNv8
+      9+KF4WS3xz8ji1i03VfcFZhhvRdI9JyyjdCY3HrsImzATcx06D9AmKO3vUn2
+      MiSwFrfgN7sHcF4kt5QedF82NAvVJJL0d1DddtxA2ujJL07rgO8='
+  - secure: ! 'TWqg1Fcy1aLpFmQv2mzYEUSW6JiM0mkGOIoqkf/BjhMJEd7Nx20iIfAGGBRl
+      nc7gEWlUYS943UbExJXtCAYcaGtKP4usYHVRtUelZ7qaRyZyme1tAZ+2uq75
+      NSM8mHX27l9bMq5FzT4OC+zCDqmIe0RYce4IcWrweCK79YvpZHM='
   matrix:
   - ROBOT_BROWSER=firefox ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
   - ROBOT_BROWSER=chrome ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
