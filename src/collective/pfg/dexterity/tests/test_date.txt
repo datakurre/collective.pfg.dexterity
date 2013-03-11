@@ -99,6 +99,7 @@ There's a published form with a date field
     Click link  css=a#plone-contentmenu-actions-delete
     Click button  Delete
     # Page should not contain button  Delete
+    Page should contain  Send Request
 
     # Disable mailer adapter on the form
     Go to  ${PLONE_URL}/send-request/edit
