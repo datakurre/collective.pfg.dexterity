@@ -27,3 +27,4 @@ env:
       454AhguEifDkRDX42i4dszyQXRrM5EFfvPyq5pOSa0oYRmgibwY='
   matrix:
   - ROBOT_BROWSER=internetexplorer
+  - ROBOT_DESIRED_CAPABILITIES="platform:Windows 2012,version:10"
