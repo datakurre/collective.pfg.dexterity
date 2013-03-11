@@ -68,7 +68,7 @@ Open Menu
     Element Should Be Visible  css=dl#${elementId} span
     Element Should Not Be Visible  css=dl#${elementId} dd.actionMenuContent
     Click link  css=dl#${elementId} dt.actionMenuHeader a
-    Wait until keyword succeeds  1  5  Element Should Be Visible  css=dl#${elementId} dd.actionMenuContent
+    Element Should Be Visible  css=dl#${elementId} dd.actionMenuContent
 
 Open add new menu
     Open menu  plone-contentmenu-factories
