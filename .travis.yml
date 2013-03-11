@@ -21,7 +21,7 @@ before_script:
 # Configure build variables
 - export ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
 - export ROBOT_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
-- export ROBOT_BROWSER=iexplore
+- export ROBOT_BROWSER=internetexplorer
 - export ROBOT_DESIRED_CAPABILITIES="platform:Windows 2012,version:10"
 
 script: bin/test
