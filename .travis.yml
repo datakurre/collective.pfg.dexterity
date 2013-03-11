@@ -19,12 +19,12 @@ after_script:
 - kill $JAVA_PID
 env:
   global:
-  - secure: ! 'FK96u1tPogYIq3mrXmV3pBMBURuzmQ0/BmpojlpGFQ7oognJbo0V5rrJRpAw
-      v3/6MODPBfT5IJKTpvMK5BcjlDUtmODzm8L0sxI3Ixu0hPy1C6h7ggEs5Lmh
-      HyD6rDaECTZMFbCr6sS+uXfMpYp6WXZs4Gx6Kd7PxOwzPELyi0o='
-  - secure: ! 'VZoqYL5jbFRJbCxalDno8KuWaQ3HSfPD5usQAPqd2thVrb40R4MX5DxlkXGi
-      d6a00585yjomwIuan/UhP8GkUEJ4ZrQBUAP90V4KvvpES7sgi83ecsv8cc3p
-      qiFidF9K5eKVk5izylQTOHdFkk0+i44LzmRYmVHAsIhKV/hi+BY='
+  - secure: ! 'ZvQWLh8NWClOL5PVwC4j5HuH1oBIe/R29U5eFjU4AJ3sXPO+9vjiW1uJYM26
+      JcQ6dh0x7LshzrW+IXcLFWf9lgDOvUYKTkNtttm/CQL9Di/3vjnBR3pQRI/a
+      ZccoINj/3gvBW2lKxOrgSpLUghMoFhO7OmvAtsduso1D6p38als='
+  - secure: ! 'L4nxOSBc3LsTYNfySAJjRl6eYWwWpgF2S68CMZpHbCU9ceE8nbxDzeNZskst
+      ENdEgRvpaR1N3KOivBGgMso3KguyYo+ztjXKdpjcEJQFLjOjRi+LwjqfFJ1N
+      454AhguEifDkRDX42i4dszyQXRrM5EFfvPyq5pOSa0oYRmgibwY='
   matrix:
   - ROBOT_BROWSER=firefox
   - ROBOT_BROWSER=internetexplorer
