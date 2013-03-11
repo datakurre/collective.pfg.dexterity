@@ -8,7 +8,7 @@ install:
 - bin/buildout -N -t 3 -c travis.cfg
 - curl -O http://saucelabs.com/downloads/Sauce-Connect-latest.zip
 - unzip Sauce-Connect-latest.zip
-- java -jar Sauce-Connect.jar $SAUCE_USERNAME $SAUCE_ACCESS_KEY -i $TUNNEL_ID -f CONNECTED &
+- java -jar Sauce-Connect.jar $SAUCE_USERNAME $SAUCE_ACCESS_KEY -i $TRAVIS_JOB_ID -f CONNECTED &
 - JAVA_PID=$!
 before_script:
 - bash -c "while [ ! -f CONNECTED ]; do sleep 2; done"
@@ -26,6 +26,6 @@ env:
       ENdEgRvpaR1N3KOivBGgMso3KguyYo+ztjXKdpjcEJQFLjOjRi+LwjqfFJ1N
       454AhguEifDkRDX42i4dszyQXRrM5EFfvPyq5pOSa0oYRmgibwY='
   matrix:
-  - TUNNEL_ID=1 ROBOT_BROWSER=firefox ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:1
-  - TUNNEL_ID=2 ROBOT_BROWSER=chrome ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:2
-  - TUNNEL_ID=3 ROBOT_BROWSER=internetexplorer ROBOT_DESIRED_CAPABILITIES="platform:Windows 2012,version:10,tunnel-identifier:3"
+  - ROBOT_BROWSER=firefox ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
+  - ROBOT_BROWSER=chrome ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
+  - ROBOT_BROWSER=internetexplorer ROBOT_DESIRED_CAPABILITIES="platform:Windows 2012,version:10,tunnel-identifier:$TRAVIS_JOB_ID"
