@@ -12,10 +12,7 @@ install:
 - bin/buildout -N -t 3 -c travis.cfg
 before_script:
 - bash -c "while [ ! -f CONNECTED ]; do sleep 2; done"
-- export ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
 - export ROBOT_BUILD_NUMBER=travis-$TRAVIS_BUILD_NUMBER
-- export ROBOT_BROWSER=internetexplorer
-- export ROBOT_DESIRED_CAPABILITIES="platform:Windows 2012,version:10"
 script: bin/test
 after_script:
 - kill $JAVA_PID
@@ -27,3 +24,8 @@ env:
   - secure: ! 'VZoqYL5jbFRJbCxalDno8KuWaQ3HSfPD5usQAPqd2thVrb40R4MX5DxlkXGi
       d6a00585yjomwIuan/UhP8GkUEJ4ZrQBUAP90V4KvvpES7sgi83ecsv8cc3p
       qiFidF9K5eKVk5izylQTOHdFkk0+i44LzmRYmVHAsIhKV/hi+BY='
+  - ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
+  matrix:
+  - ROBOT_BROWSER=firefox
+  - ROBOT_BROWSER=internetexplorer
+  - ROBOT_BROWSER=chrome
