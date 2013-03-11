@@ -29,4 +29,4 @@ env:
   matrix:
   - ROBOT_BROWSER=firefox ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
   - ROBOT_BROWSER=chrome ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
-  - ROBOT_BROWSER=internetexplorer ROBOT_DESIRED_CAPABILITIES="platform:Windows 2012,version:10,tunnel-identifier:$TRAVIS_JOB_ID"
+  - ROBOT_BROWSER=internetexplorer ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
