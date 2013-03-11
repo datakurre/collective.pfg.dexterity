@@ -8,7 +8,8 @@ install:
 - bin/buildout -N -t 3 -c travis.cfg
 - curl -O http://saucelabs.com/downloads/Sauce-Connect-latest.zip
 - unzip Sauce-Connect-latest.zip
-- java -jar Sauce-Connect.jar $SAUCE_USERNAME $SAUCE_ACCESS_KEY -i $TRAVIS_JOB_ID -f CONNECTED &
+- java -jar Sauce-Connect.jar $SAUCE_USERNAME $SAUCE_ACCESS_KEY -i $TRAVIS_JOB_ID
+  -f CONNECTED &
 - JAVA_PID=$!
 before_script:
 - bash -c "while [ ! -f CONNECTED ]; do sleep 2; done"
@@ -19,12 +20,16 @@ after_script:
 - kill $JAVA_PID
 env:
   global:
-  - secure: ! 'ZvQWLh8NWClOL5PVwC4j5HuH1oBIe/R29U5eFjU4AJ3sXPO+9vjiW1uJYM26
-      JcQ6dh0x7LshzrW+IXcLFWf9lgDOvUYKTkNtttm/CQL9Di/3vjnBR3pQRI/a
-      ZccoINj/3gvBW2lKxOrgSpLUghMoFhO7OmvAtsduso1D6p38als='
-  - secure: ! 'L4nxOSBc3LsTYNfySAJjRl6eYWwWpgF2S68CMZpHbCU9ceE8nbxDzeNZskst
-      ENdEgRvpaR1N3KOivBGgMso3KguyYo+ztjXKdpjcEJQFLjOjRi+LwjqfFJ1N
-      454AhguEifDkRDX42i4dszyQXRrM5EFfvPyq5pOSa0oYRmgibwY='
+  - secure: ! 'bp0lyZetHd1D5sCcQzCMc138D8LKjDwSdhJyd7GLNaLydvtAVTJhl9qLqJcH
+
+      +KwimkkzvsDSZcLqy99eaCp7aqXbQ9NTdB/qWqFF/T4tkzysGb0tRjHYQWpv
+
+      /ZlWKJH24JKtvER8G+b5NnaBFArqz4LkyFFv7e2a3z398QimpXQ='
+  - secure: ! 'Ji3kP+Q/r7xtLdGw502QtTZjlh7qEsXpHOoo5diG6eIyZuPrOK0tWcX8m10c
+
+      aUlenrjzumXSzjQrOtleGr4JuMWtf1n+/H3fzcHgYwyPfTZte2zV+S+M3yDT
+
+      7rBRfiMbCPsM4UmU5FHmxC+BTnLLxpoTaSgwxzp7UNuJRhiiZwk='
   matrix:
   - ROBOT_BROWSER=firefox ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
   - ROBOT_BROWSER=chrome ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
