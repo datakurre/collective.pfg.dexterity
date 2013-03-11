@@ -29,7 +29,7 @@ Start browser
     Log  ${REMOTE_URL}
     Open browser  ${PLONE_URL}  ${BROWSER}
     ...           remote_url=${REMOTE_URL}
-    ...           desired_capabilities=${DESIRED_CAPABILITIES}
+    ...           desired_capabilities=${DESIRED_CAPABILITIES},name:${TEST_NAME}
 
 Background
     Given 'Form Folder' is installed
