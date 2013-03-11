@@ -24,6 +24,21 @@ ${REMOTE_URL} =
 ${BUILD_NUMBER} =  n/a
 ${DESIRED_CAPABILITIES} =
 
+*** Test Cases ***
+
+Form folder is addable
+    Given I'm logged in as a 'Site Administrator'
+     When I go to the front page
+     Then I can add a new form folder
+
+Date field is supported
+    Given There's a content type with a date field
+      And There's a published form with a date field
+      And The form has properly configured 'Content Adapter'
+     When I submit the form as an 'Anonymous User'
+     Then A content object is created
+      And it has the date field filled
+
 *** Keywords ***
 
 Start browser
@@ -166,19 +181,21 @@ A content object is created
     Capture page screenshot
     Disable autologin
 
-
 It has the date field filled
     Enable autologin as  Site Administrator
     Go to  ${PLONE_URL}/tracker/ticket
     Element text should be  css=.date-field#form-widgets-duedate  1/1/13
     Disable autologin
 
-*** Test Cases ***
+I'm logged in as a '${ROLE}'
+    Enable autologin as  ${ROLE}
+    Go to  ${PLONE_URL}
 
-Date field is supported
-    Given There's a content type with a date field
-    And There's a published form with a date field
-    And The form has properly configured 'Content Adapter'
-    When I submit the form as an 'Anonymous User'
-    Then A content object is created
-    And it has the date field filled
+I go to the front page
+    Go to  ${PLONE_URL}
+
+I can add a new form folder
+    Open add new menu
+    Click link  css=#plone-contentmenu-factories a#formfolder
+    Input text  title  A sample form folder
+    Click button  form.button.save
