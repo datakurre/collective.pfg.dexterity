@@ -23,6 +23,7 @@ ${BROWSER} =  Firefox
 ${REMOTE_URL} =
 ${BUILD_NUMBER} =  manual
 ${DESIRED_CAPABILITIES} =
+${SESSION_ID} =
 
 *** Test Cases ***
 
