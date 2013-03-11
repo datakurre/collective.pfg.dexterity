@@ -1,40 +1,29 @@
 ---
 language: python
 python: '2.7'
-
 install:
-# Download Sauce Connect:
 - curl -O http://saucelabs.com/downloads/Sauce-Connect-latest.zip
 - unzip Sauce-Connect-latest.zip
-# Start Sauce Connect:
 - java -jar Sauce-Connect.jar $SAUCE_USERNAME $SAUCE_ACCESS_KEY -f CONNECTED &
 - JAVA_PID=$!
-# Buildout Plone:
 - mkdir -p buildout-cache/eggs
 - mkdir -p buildout-cache/downloads
 - python bootstrap.py -c travis.cfg
 - bin/buildout -N -t 3 -c travis.cfg
-
 before_script:
-# Wait until Sauce has really started:
 - bash -c "while [ ! -f CONNECTED ]; do sleep 2; done"
-# Configure build variables
 - export ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
 - export ROBOT_BUILD_NUMBER=travis-$TRAVIS_BUILD_NUMBER
 - export ROBOT_BROWSER=internetexplorer
 - export ROBOT_DESIRED_CAPABILITIES="platform:Windows 2012,version:10"
-
 script: bin/test
-
 after_script:
-# Stop Sauce Connect:
 - kill $JAVA_PID
-
 env:
   global:
-  - secure: ! 'DQSpUjZK+gjYwthJIr/1mwuck3RpvubMzQdWvM+k0DDRAbIjhn73o/S7p2gh
-      OE20DkRV0+g9XrixHHy4wqJhbvGB4SbaQ2MdeDylRwAE2xPOif8+kzMoXlIR
-      yLOr3EPKu3vLn64E4FB+KkuZBhsGXD1BATwulc8Qcp6ULiR0i/o='
-  - secure: ! 'NJ1vJIH30I3XRdj50mU4wVx4oRa1yBx4x2rjul3qrwxozIpjKEfE7DCxi3w+
-      WNjuWKEhP+wRbSLLNC58IMqfKS7ro8RPExClvs2nZhaYhUgzpjIKi6P4xPM+
-      FjMoMBzPZGmnFUM+Xx6xw9+fWVwUpec1s8mu03zPCQ1g+8xK8Yw='
+  - secure: ! 'FK96u1tPogYIq3mrXmV3pBMBURuzmQ0/BmpojlpGFQ7oognJbo0V5rrJRpAw
+      v3/6MODPBfT5IJKTpvMK5BcjlDUtmODzm8L0sxI3Ixu0hPy1C6h7ggEs5Lmh
+      HyD6rDaECTZMFbCr6sS+uXfMpYp6WXZs4Gx6Kd7PxOwzPELyi0o='
+  - secure: ! 'VZoqYL5jbFRJbCxalDno8KuWaQ3HSfPD5usQAPqd2thVrb40R4MX5DxlkXGi
+      d6a00585yjomwIuan/UhP8GkUEJ4ZrQBUAP90V4KvvpES7sgi83ecsv8cc3p
+      qiFidF9K5eKVk5izylQTOHdFkk0+i44LzmRYmVHAsIhKV/hi+BY='
