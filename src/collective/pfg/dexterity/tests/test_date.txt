@@ -98,7 +98,6 @@ There's a published form with a date field
 
     Click link  css=a#plone-contentmenu-actions-delete
     Click button  Delete
-    # Page should not contain button  Delete
     Page should contain  Send Request
 
     # Disable mailer adapter on the form
@@ -115,6 +114,7 @@ There's a published form with a date field
     # Publish the form
     Go to  ${PLONE_URL}/send-request
     Open workflow menu
+    Page should contain element  css=a#workflow-transition-publish
     Click link  css=a#workflow-transition-publish
     Page should contain  Item state changed.
 
