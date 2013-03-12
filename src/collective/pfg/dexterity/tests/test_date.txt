@@ -95,7 +95,6 @@ There's a published form with a date field
     # Delete 'replyto' field (included by default) from the created Form Folder
     Go to  ${PLONE_URL}/send-request/replyto
     Open action menu
-
     Click link  css=a#plone-contentmenu-actions-delete
     Click button  Delete
     Page should contain  Send Request
