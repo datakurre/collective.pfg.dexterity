@@ -13,8 +13,6 @@ install:
 - JAVA_PID=$!
 before_script:
 - bash -c "while [ ! -f CONNECTED ]; do sleep 2; done"
-- export ROBOT_BUILD_NUMBER=travis-$TRAVIS_BUILD_NUMBER
-- export ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
 script: bin/test
 after_script:
 - kill $JAVA_PID
@@ -26,6 +24,8 @@ env:
   - secure: ! 'TWqg1Fcy1aLpFmQv2mzYEUSW6JiM0mkGOIoqkf/BjhMJEd7Nx20iIfAGGBRl
       nc7gEWlUYS943UbExJXtCAYcaGtKP4usYHVRtUelZ7qaRyZyme1tAZ+2uq75
       NSM8mHX27l9bMq5FzT4OC+zCDqmIe0RYce4IcWrweCK79YvpZHM='
+  - ROBOT_BUILD_NUMBER=travis-$TRAVIS_BUILD_NUMBER
+  - ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
   matrix:
   - ROBOT_BROWSER=firefox ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
   - ROBOT_BROWSER=chrome ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
