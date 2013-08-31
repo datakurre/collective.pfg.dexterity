@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.7.0 (2013-08-31)
+------------------
+
+- Fix to allow limit target folder by base folderish interfaces instead of
+  portal_type [fixes #6]
+  [Asko Soukka]
+
 0.6.0 (2012-09-16)
 ------------------
 
