@@ -1,17 +1,13 @@
 syntax: glob
-
-bin
-develop-eggs
-buildout-cache
-parts
-dist
-
-*.pyc
-*.mo
 *.egg-info
-
+*.mo
+*.pyc
+.idea
 .installed.cfg
 .mr.developer.cfg
 .ropeproject
-
-src/plone.act
+bin
+buildout-cache
+develop-eggs
+dist
+parts
