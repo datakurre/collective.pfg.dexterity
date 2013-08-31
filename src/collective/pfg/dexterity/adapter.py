@@ -57,6 +57,12 @@ _ = ZopeMessageFactory("collective.pfg.dexterity")
 
 LOG = logging.getLogger("collective.pfg.dexterity")
 
+TARGET_INTERFACES = (
+    "Products.ATContentTypes.interfaces.folder.IATFolder",
+    "collective.pfg.dexterity.interfaces.IDexterityContentAdapter",
+    "plone.dexterity.interfaces.IDexterityContainer"
+)
+
 
 DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
     atapi.StringField(
@@ -90,11 +96,9 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
                                    u"new content should be placed. Please, "
                                    u"make sure that the folder allows adding "
                                    u"content of the selected type.")),
-            base_query={"portal_type": ("Folder",
-                                        "Dexterity Content Adapter")},
+            base_query={"object_provides": TARGET_INTERFACES}
         ),
         relationship="targetFolder",
-        allowed_types=("Folder",),
         multiValued=False
     ),
     atapi.BooleanField(
