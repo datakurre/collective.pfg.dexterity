@@ -4,26 +4,14 @@ Meta: Id  36107035
 Meta: Title  As a 'Site Administrator' I want to save submissions with date values
 
 Library  OperatingSystem
-Library  Selenium2Library  timeout=10  implicit_wait=0.5
-Library  Remote  ${PLONE_URL}/RemoteKeywordsLibrary
 
-Test Setup  Run keywords  Start browser  Background
-Test Teardown  Run keywords  Report test status  Close All Browsers
+Resource  plone/app/robotframework/keywords.robot
+Resource  plone/app/robotframework/saucelabs.robot
 
-*** Variables ***
+Library  Remote  ${PLONE_URL}/RobotRemote
 
-${ZOPE_HOST} =  localhost
-${ZOPE_PORT} =  55001
-${ZOPE_URL} =  http://${ZOPE_HOST}:${ZOPE_PORT}
-
-${PLONE_SITE_ID} =  plone
-${PLONE_URL} =  ${ZOPE_URL}/${PLONE_SITE_ID}
-
-${BROWSER} =  Firefox
-${REMOTE_URL} =
-${BUILD_NUMBER} =  manual
-${DESIRED_CAPABILITIES} =  platform:Linux
-${SESSION_ID} =
+Test Setup  Run keywords  Open SauceLabs test browser  Background
+Test Teardown  Run keywords  Report test status  Close all browsers
 
 *** Test Cases ***
 
@@ -44,26 +32,12 @@ Date field is supported
 
 *** Keywords ***
 
-Start browser
-    ${BUILD_INFO} =  Set variable
-    ...           build:${BUILD_NUMBER},name:${SUITE_NAME} | ${TEST_NAME}
-    Open browser  ${PLONE_URL}  ${BROWSER}
-    ...           remote_url=${REMOTE_URL}
-    ...           desired_capabilities=${DESIRED_CAPABILITIES},${BUILD_INFO}
-    Run keyword and ignore error  Set session id
-
-Set session id
-    Keyword should exist  Get session id
-    ${SESSION_ID} =  Get session id
-    Set test variable  ${SESSION_ID}  ${SESSION_ID}
-
-Report test status
-    Run keyword unless  '${SESSION_ID}' == ''
-    ...    Report sauce status  ${SESSION_ID}  ${TEST_STATUS}  ${TEST_TAGS}
-
 Background
-    Given 'Form Folder' is installed
-    And 'Content Adapter' is installed
+    Given 'PloneFormGen' is activated
+    And 'collective.pfg.dexterity' is activated
+
+'${product}' is activated
+    Product is activated  ${product}
 
 '${portal_type}' is installed
     Portal type is installed  ${portal_type}
@@ -144,8 +118,8 @@ The form has properly configured 'Content Adapter'
     Select radio button  createdType  Ticket
     Click button  Add...
     Click link  css=.overlay a[rel='Home']
-    Page should contain element  css=.overlay input[type='checkbox']
-    Click element  css=.overlay input[type='checkbox']
+    Page should contain element  css=.overlay tr.even input[type='checkbox']
+    Click element  css=.overlay tr.even input[type='checkbox']
     Click button  form.button.save
 
     # Map form fields to Ticket-content one field at time

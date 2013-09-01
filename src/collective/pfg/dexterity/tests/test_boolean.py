@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""CoreJet test"""
 import unittest2 as unittest
 from corejet.core import Scenario, story, scenario, given, when, then
 
@@ -8,14 +7,16 @@ from plone.testing import z2
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
 
-from collective.pfg.dexterity.testing import FUNCTIONAL_TESTING
+from collective.pfg.dexterity.testing import (
+    COLLECTIVE_PFG_DEXTERITY_FUNCTIONAL_TESTING
+)
 
 
 @story(id="18094419", title=(u"As a 'Site Administrator' I want to save "
                              u"submissions with boolean values"))
 class Story(unittest.TestCase):
 
-    layer = FUNCTIONAL_TESTING
+    layer = COLLECTIVE_PFG_DEXTERITY_FUNCTIONAL_TESTING
 
     @property
     def portal(self):

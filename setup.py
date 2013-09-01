@@ -37,7 +37,8 @@ setup(
         "corejet.pivotal",
         "corejet.robot",
         "plone.testing",
-        "plone.app.testing[robot]",
+        "plone.app.testing",
+        "plone.app.robotframework",
     ]},
     entry_points="""
     # -*- Entry points: -*-

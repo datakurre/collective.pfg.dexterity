@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-"""CoreJet tests"""
 import unittest2 as unittest
 from corejet.core import Scenario, story, scenario, given, when, then
-
 from plone.testing import z2
-
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing import setRoles
-
-from collective.pfg.dexterity.testing import FUNCTIONAL_TESTING
-
 import transaction
+
+from collective.pfg.dexterity.testing import (
+    COLLECTIVE_PFG_DEXTERITY_FUNCTIONAL_TESTING
+)
 
 
 @story(id="17475767", title=("As Site Administrator I want to create "
@@ -20,7 +18,7 @@ import transaction
                              "tickets"))
 class I_want_to_create_feedback_form(unittest.TestCase):
 
-    layer = FUNCTIONAL_TESTING
+    layer = COLLECTIVE_PFG_DEXTERITY_FUNCTIONAL_TESTING
 
     def redo(self, name):
         index = [s.name for s in self.scenarios].index(name)

@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+from plone.app.robotframework import (
+    RemoteLibraryLayer,
+    AutoLogin,
+    QuickInstaller
+)
 from plone.app.testing import (
     FunctionalTesting,
     IntegrationTesting,
@@ -6,9 +11,10 @@ from plone.app.testing import (
     PloneSandboxLayer,
 )
 from plone.testing import z2
+from collective.pfg.dexterity.testing_robot import RemoteKeywordsLibrary
 
 
-class Layer(PloneSandboxLayer):
+class CollectivePFGDexterityLayer(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
@@ -41,36 +47,26 @@ class Layer(PloneSandboxLayer):
         plone.dexterity.schema.SCHEMA_CACHE.clear()
 
 
-FIXTURE = Layer()
+COLLECTIVE_PFG_DEXTERITY_FIXTURE = CollectivePFGDexterityLayer()
 
 
-INTEGRATION_TESTING = IntegrationTesting(
-    bases=(FIXTURE,), name="Integration")
-FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(FIXTURE,), name="Functional")
-ACCEPTANCE_TESTING = FunctionalTesting(
-    bases=(FIXTURE, z2.ZSERVER_FIXTURE), name="Acceptance")
+COLLECTIVE_PFG_DEXTERITY_INTEGRATION_TESTING = IntegrationTesting(
+    bases=(COLLECTIVE_PFG_DEXTERITY_FIXTURE,),
+    name="Integration")
+COLLECTIVE_PFG_DEXTERITY_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(COLLECTIVE_PFG_DEXTERITY_FIXTURE,),
+    name="Functional")
+COLLECTIVE_PFG_DEXTERITY_ACCEPTANCE_TESTING = FunctionalTesting(
+    bases=(COLLECTIVE_PFG_DEXTERITY_FIXTURE, z2.ZSERVER_FIXTURE),
+    name="Acceptance")
 
-
-class RobotLayer(PloneSandboxLayer):
-    defaultBases = (FIXTURE,)
-
-    def setUpPloneSite(self, portal):
-        # Inject keyword for getting the selenium session id
-        import Selenium2Library
-        Selenium2Library.keywords._browsermanagement.\
-            _BrowserManagementKeywords.get_session_id = lambda self:\
-            self._cache.current.session_id
-        # Inject remote keywords library into site
-        from collective.pfg.dexterity import testing_robot
-        portal._setObject("RemoteKeywordsLibrary",
-                          testing_robot.RemoteKeywordsLibrary())
-
-    def tearDownPloneSite(self, portal):
-        portal._delObject("RemoteKeywordsLibrary")
-
-ROBOT_FIXTURE = RobotLayer()
-
+ROBOT_REMOTE_LIBRARY_FIXTURE = RemoteLibraryLayer(
+    bases=(PLONE_FIXTURE,),
+    libraries=(AutoLogin, QuickInstaller, RemoteKeywordsLibrary),
+    name="CollectivePFGDexterity:RobotRemote")
 
 ROBOT_TESTING = FunctionalTesting(
-    bases=(ROBOT_FIXTURE, z2.ZSERVER_FIXTURE), name="Robot")
+    bases=(COLLECTIVE_PFG_DEXTERITY_FIXTURE,
+           ROBOT_REMOTE_LIBRARY_FIXTURE,
+           z2.ZSERVER_FIXTURE),
+    name="Robot")
