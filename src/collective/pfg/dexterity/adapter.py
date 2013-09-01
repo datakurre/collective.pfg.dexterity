@@ -1,58 +1,64 @@
 # -*- coding: utf-8 -*-
-"""Dexterity content creation adapter for PloneFormGen"""
+"""Dexterity content creation adapter for PloneFormGen
+"""
 
 import logging
-
 import re
 from time import time
 
 from ZODB.POSException import ConflictError
-
-from zope.component import getMultiAdapter, getUtility, queryUtility
-from zope.schema import TextLine, List, Datetime, Date
+from zope.component import (
+    getMultiAdapter,
+    getUtility,
+    queryUtility
+)
+from zope.schema import (
+    TextLine,
+    List,
+    Datetime,
+    Date
+)
 from zope.schema.interfaces import IVocabularyFactory
 from zope.globalrequest import getRequest
-from zope.interface import implements, alsoProvides
+from zope.interface import (
+    implements,
+    alsoProvides
+)
 from zope.annotation.interfaces import IAnnotations
-
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import getSecurityManager
 from AccessControl.SecurityManagement import setSecurityManager
-
 from AccessControl import ClassSecurityInfo
 from AccessControl.interfaces import IOwned
-
 from Products.Archetypes import atapi
 from Products.Archetypes.Widget import SelectionWidget
 from Products.ATContentTypes.content.schemata import finalizeATCTSchema
-
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import ModifyPortalContent
-
 from Products.PloneFormGen.interfaces import IPloneFormGenField
 from Products.PloneFormGen.interfaces import IPloneFormGenActionAdapter
 from Products.PloneFormGen.content.actionAdapter import FormAdapterSchema
 from Products.PloneFormGen.content.actionAdapter import FormActionAdapter
 from Products.PloneFormGen.config import FORM_ERROR_MARKER
-
-from Products.DataGridField import DataGridField, DataGridWidget, SelectColumn
-
+from Products.DataGridField.SelectColumn import SelectColumn
+from Products.DataGridField.DataGridWidget import DataGridWidget
+from Products.DataGridField.DataGridField import DataGridField
 from archetypes.referencebrowserwidget.widget import ReferenceBrowserWidget
-
-from z3c.form.interfaces import\
-    IFormLayer, IFieldWidget, IDataConverter, IDataManager
-
+from z3c.form.interfaces import (
+    IFormLayer,
+    IFieldWidget,
+    IDataConverter,
+    IDataManager
+)
 from plone.memoize import ram
 from plone.behavior.interfaces import IBehavior
-from plone.directives.form import IFormFieldProvider
-
+from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import createContentInContainer
+from zope.i18nmessageid import MessageFactory as ZopeMessageFactory
 
 from collective.pfg.dexterity.interfaces import IDexterityContentAdapter
 from collective.pfg.dexterity.config import PROJECTNAME
-
-from zope.i18nmessageid import MessageFactory as ZopeMessageFactory
 _ = ZopeMessageFactory("collective.pfg.dexterity")
 
 LOG = logging.getLogger("collective.pfg.dexterity")
@@ -133,12 +139,12 @@ DexterityContentAdapterSchema = FormAdapterSchema.copy() + atapi.Schema((
             label=_("field_mapping_label",
                     default=u"Field mapping"),
             description=_("field_mapping_help",
-                          default=(u"Map form fields to fields of the "
-                                   u"selected content type. Please note, "
-                                   u"that you must first select the content "
-                                   u"type, then save this adapter, and only "
-                                   u"then you'll be able to see the fields "
-                                   u"of the selected content type.")),
+                          default=u"Map form fields to field of the "
+                                  u"selected content type. Please note, "
+                                  u"that you must first select the "
+                                  u"content type, then save this adapter, "
+                                  u"and only then you'll be able to see the "
+                                  u"fields of the selected content type."),
             columns={
                 "form": SelectColumn(
                     _("field_mapping_form_label",
@@ -219,7 +225,9 @@ def as_owner(func):
 
 
 class DexterityContentAdapter(FormActionAdapter):
-    """Dexterity content creation adapter for PloneFormGen"""
+    """Dexterity content creation adapter for PloneFormGen
+    """
+
     implements(IPloneFormGenActionAdapter, IDexterityContentAdapter)
 
     security = ClassSecurityInfo()
