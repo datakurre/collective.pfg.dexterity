@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Initialize Archetypes"""
+"""Initialize Archetypes
+"""
 
 from collective.pfg.dexterity import config
 
@@ -10,13 +11,13 @@ from Products.CMFCore import utils
 def initialize(context):
     """Initializer called when used as a Zope 2 product.
 
-    This is referenced from configure.zcml. Regstrations as a "Zope 2 product"
+    This is referenced from configure.zcml. Registrations as a "Zope 2 product"
     is necessary for GenericSetup profiles to work, for example.
 
-    Here, we call the Archetypes machinery to register our content types
-    with Zope and the CMF.
-    """
+    Here, we call the Archetypes machinery to register our content types with
+    Zope and the CMF.
 
+    """
     # Retrieve the content types that have been registered with Archetypes
     # This happens when the content type is imported and the registerType()
     # call in the content type"s module is invoked. Actually, this happens
@@ -36,9 +37,10 @@ def initialize(context):
     # in the GenericSetup profile.
 
     for atype, constructor in zip(content_types, constructors):
-        utils.ContentInit("%s: %s" % (config.PROJECTNAME, atype.portal_type),
+        utils.ContentInit(
+            "%s: %s" % (config.PROJECTNAME, atype.portal_type),
             content_types=(atype,),
             permission=config.ADD_PERMISSIONS[atype.portal_type],
             extra_constructors=(constructor,),
             fti=ftis,
-            ).initialize(context)
+        ).initialize(context)

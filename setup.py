@@ -26,6 +26,7 @@ setup(
     install_requires=[
         "setuptools",
         "five.globalrequest",
+        "plone.autoform",
         "plone.app.dexterity",
         "Products.PloneFormGen",
         "Products.DataGridField>=1.8b1",

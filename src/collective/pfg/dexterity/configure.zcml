@@ -1,25 +1,27 @@
 <configure
-   xmlns="http://namespaces.zope.org/zope"
-   xmlns:i18n="http://namespaces.zope.org/i18n"
-   xmlns:five="http://namespaces.zope.org/five"
-   xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-   i18n_domain="collective.pfg.dexterity">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.pfg.dexterity">
 
-  <includeDependencies package="."/>
+    <include package="plone.app.dexterity" />
+    <include package="Products.PloneFormGen" />
+    <include package="Products.DataGridField" />
 
-  <five:registerPackage package="." initialize=".initialize"/>
+    <five:registerPackage package="." initialize=".initialize"/>
 
-  <i18n:registerTranslations directory="locales"/>
+    <i18n:registerTranslations directory="locales"/>
 
-  <class class=".adapter.DexterityContentAdapter"/>
+    <class class=".adapter.DexterityContentAdapter"/>
 
-  <genericsetup:registerProfile
-     name="default"
-     title="Dexterity PloneFromGen Adapter"
-     directory="profiles/default"
-     description="Installs dexterity content creation adapter for PloneFormGen"
-     provides="Products.GenericSetup.interfaces.EXTENSION"
-     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-     />
+    <genericsetup:registerProfile
+        name="default"
+        title="Dexterity PloneFromGen Adapter"
+        directory="profiles/default"
+        description="Installs dexterity content creation adapter for PloneFormGen"
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        />
 
 </configure>

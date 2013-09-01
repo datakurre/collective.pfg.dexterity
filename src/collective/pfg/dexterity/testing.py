@@ -12,19 +12,10 @@ class Layer(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
-        import plone.app.dexterity
-        self.loadZCML(package=plone.app.dexterity)
-
-        import Products.PloneFormGen
-        self.loadZCML(package=Products.PloneFormGen)
-        z2.installProduct(app, "Products.PloneFormGen")
-
-        import Products.DataGridField
-        self.loadZCML(package=Products.DataGridField)
-        z2.installProduct(app, "Products.DataGridField")
-
         import collective.pfg.dexterity
         self.loadZCML(package=collective.pfg.dexterity)
+        z2.installProduct(app, "Products.PloneFormGen")
+        z2.installProduct(app, "Products.DataGridField")
         z2.installProduct(app, "collective.pfg.dexterity")
 
     def setUpPloneSite(self, portal):
