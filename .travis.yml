@@ -18,14 +18,14 @@ after_script:
 - kill $JAVA_PID
 env:
   global:
-  - SAUCE_USERNAME=cpfgdexterity
-  - ROBOT_BUILD_NUMBER=travis-$TRAVIS_BUILD_NUMBER
-  - ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
-  - ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
   - secure: |-
       cIX9mmV2YJn6l3HHS3kOBnOoe4SueTvI7A/hZFOrKEGxxq4FrrEgdtxnXc/o
       ufGhUWyWaIbzGsKdj95n5EwfXijXAGkGevypOSMayF7uMj1nSJJ1OwZXyOhd
       isCPBu1lepVsWbhmH5fqtR61rnTlzs3uh67BfGGX07HvYONlOhc=
+  - SAUCE_USERNAME=cpfgdexterity
+  - ROBOT_BUILD_NUMBER=travis-$TRAVIS_BUILD_NUMBER
+  - ROBOT_REMOTE_URL=http://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@ondemand.saucelabs.com:80/wd/hub
+  - ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
   matrix:
   - ROBOT_BROWSER=firefox ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
   - ROBOT_BROWSER=chrome ROBOT_DESIRED_CAPABILITIES=tunnel-identifier:$TRAVIS_JOB_ID
