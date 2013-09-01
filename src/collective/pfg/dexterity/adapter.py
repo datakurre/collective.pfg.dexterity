@@ -9,8 +9,7 @@ from time import time
 from ZODB.POSException import ConflictError
 from zope.component import (
     getMultiAdapter,
-    getUtility,
-    queryUtility
+    getUtility
 )
 from zope.schema import (
     TextLine,
@@ -51,10 +50,11 @@ from z3c.form.interfaces import (
     IDataManager
 )
 from plone.memoize import ram
-from plone.behavior.interfaces import IBehavior
-from plone.autoform.interfaces import IFormFieldProvider
 from plone.dexterity.interfaces import IDexterityFTI
-from plone.dexterity.utils import createContentInContainer
+from plone.dexterity.utils import (
+    createContentInContainer,
+    getAdditionalSchemata
+)
 from zope.i18nmessageid import MessageFactory as ZopeMessageFactory
 
 from collective.pfg.dexterity.interfaces import IDexterityContentAdapter
@@ -202,7 +202,8 @@ DexterityContentAdapterSchema["description"].storage =\
 
 
 def as_owner(func):
-    """Decorator for executing actions as the context owner"""
+    """Decorator for executing actions as the context owner
+    """
 
     @ram.cache(lambda method, context, owner: (owner.getId(), time() // 60))
     def wrapped(context, owner):
@@ -256,7 +257,7 @@ class DexterityContentAdapter(FormActionAdapter):
 
     @as_owner
     def _setAsOwner(self, context, field, value):
-        # Try to set the value on creted object
+        # Try to set the value on created object
         try:
             # 1) Try to set it directly
             bound_field = field.bind(context)
@@ -426,22 +427,13 @@ class DexterityContentAdapter(FormActionAdapter):
                           if IPloneFormGenField.providedBy(obj)]
         return atapi.DisplayList([(u"", _(u"Don't save"))] + fields)
 
-    @ram.cache(lambda method, self, portal_type: time() // 60)
-    def _getDexteritySchemas(self, portal_type):
-        fti = getUtility(IDexterityFTI, name=portal_type)
-        schemas = [fti.lookupSchema()]
-        # Schemas provided by behaviors can only be looked up by looping
-        # through behaviors or asking SCHEMA_CACHE for subtypes...
-        for behavior_name in fti.behaviors:
-            behavior = queryUtility(IBehavior, name=behavior_name)
-            if behavior is not None\
-                and IFormFieldProvider.providedBy(behavior.interface):
-                schemas.append(behavior.interface)
-        return schemas
-
     def _getDexterityFields(self, portal_type):
+        fti = getUtility(IDexterityFTI, name=portal_type)
+        schema = fti.lookupSchema()
         fields = {}
-        for schema in self._getDexteritySchemas(portal_type):
+        for name in schema:
+            fields[name] = schema[name]
+        for schema in getAdditionalSchemata(portal_type=portal_type):
             for name in schema:
                 fields[name] = schema[name]
         return fields
