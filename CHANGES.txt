@@ -1,11 +1,16 @@
 Changelog
 =========
 
-0.7.1 (unreleased)
+0.8.0 (2013-09-02)
 ------------------
 
-- Nothing changed yet.
-
+- Fix to use p.dexterity.utils.getAdditionalSchemata to read behavior based
+  schemas
+  [Asko Soukka]
+- Remove <includeDependencies />
+  [Asko Soukka]
+- Remove implicit dependency on plone.directives.form
+  [Asko Soukka]
 
 0.7.0 (2013-08-31)
 ------------------

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="collective.pfg.dexterity",
-    version='0.7.1.dev0',
+    version='0.8.0',
     description="Installs dexterity content creation adapter for PloneFormGen",
     long_description=(open("README.rst").read() + "\n" +
                       open("CHANGES.txt").read()),
