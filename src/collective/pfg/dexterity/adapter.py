@@ -52,7 +52,8 @@ from z3c.form.interfaces import (
 from plone.memoize import ram
 from plone.dexterity.interfaces import IDexterityFTI
 from plone.dexterity.utils import (
-    createContentInContainer,
+    createContent,
+    addContentToContainer,
     getAdditionalSchemata
 )
 from zope.i18nmessageid import MessageFactory as ZopeMessageFactory
@@ -247,9 +248,12 @@ class DexterityContentAdapter(FormActionAdapter):
     workflowTransition = atapi.ATFieldProperty("workflowTransition")
 
     @as_owner
-    def _createAsOwner(self, targetFolder, createdType, **kw):
-        return createContentInContainer(
-            targetFolder, createdType, checkConstraints=True, **kw)
+    def _createAsOwner(self, createdType, **kw):
+        return createContent(createdType, **kw)
+
+    @as_owner
+    def _addContentToContainerAsOwner(self, targetFolder, obj):
+        return addContentToContainer(targetFolder, obj, checkConstraints=True)
 
     @as_owner
     def _deleteAsOwner(self, container, obj):
@@ -358,10 +362,10 @@ class DexterityContentAdapter(FormActionAdapter):
             # so you should provide e.g. INameFromTitle adapter
             # to generate a custom id
             if "title" in values:
-                context = self._createAsOwner(targetFolder, createdType,
+                context = self._createAsOwner(createdType,
                                               title=values.pop("title")[1])
             else:
-                context = self._createAsOwner(targetFolder, createdType)
+                context = self._createAsOwner(createdType)
         except ConflictError:
             raise
         except Exception, e:
@@ -374,6 +378,9 @@ class DexterityContentAdapter(FormActionAdapter):
             if error_msg:
                 self._deleteAsOwner(targetFolder, context)
                 return {FORM_ERROR_MARKER: error_msg}
+
+        # Add into container
+        context = self._addContentToContainerAsOwner(targetFolder, context)
 
         # Give ownership for the logged-in submitter, when that's enabled
         if giveOwnership:
