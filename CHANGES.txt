@@ -1,11 +1,12 @@
 Changelog
 =========
 
-0.8.1 (unreleased)
-------------------
+0.9.0rc1 (2013-12-15)
+---------------------
 
-- Nothing changed yet.
-
+- Fix to add created content into container only after its fields have been
+  filled (to support custom id adapters)
+  [Asko Soukka]
 
 0.8.0 (2013-09-02)
 ------------------
