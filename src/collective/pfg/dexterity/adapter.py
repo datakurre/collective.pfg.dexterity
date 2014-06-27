@@ -14,6 +14,7 @@ from zope.component import (
 from zope.schema import (
     TextLine,
     List,
+    Set,
     Datetime,
     Date
 )
@@ -57,6 +58,7 @@ from plone.dexterity.utils import (
     getAdditionalSchemata
 )
 from zope.i18nmessageid import MessageFactory as ZopeMessageFactory
+from zope.i18nmessageid import Message
 
 from collective.pfg.dexterity.interfaces import IDexterityContentAdapter
 from collective.pfg.dexterity.config import PROJECTNAME
@@ -261,7 +263,20 @@ class DexterityContentAdapter(FormActionAdapter):
 
     @as_owner
     def _setAsOwner(self, context, field, value):
+        # Do some trivial transforms
+        def transform(value, field):
+            if isinstance(field, Set) and isinstance(value, unicode):
+                value = set((value,))
+            elif isinstance(field, Set) and isinstance(value, tuple):
+                value = set(value)
+            elif isinstance(field, Set) and isinstance(value, list):
+                value = set(value)
+            elif isinstance(field, List) and isinstance(value, unicode):
+                value = list((value,))
+            return value
+
         # Try to set the value on created object
+        value = transform(value, field)
         try:
             # 1) Try to set it directly
             bound_field = field.bind(context)
@@ -457,12 +472,18 @@ class DexterityContentAdapter(FormActionAdapter):
     def listContentFields(self):
         types = getToolByName(self, "portal_types")
         createdType = self.getCreatedType()
+
+        def smart_title(title, key):
+            if not isinstance(title, Message):
+                return u"{0:s} ({1:s})".format(title, key)
+            else:
+                # Don't brake i18n messages
+                return title
+
         if createdType in types.keys():
             mapping = self._getDexterityFields(createdType)
-            fields = [
-                (key, u"{0:s} ({1:s})".format(mapping[key].title, key))
-                for key in mapping
-            ]
+            fields = [(key, smart_title(mapping[key].title, key))
+                      for key in mapping]
         else:
             fields = []
         return atapi.DisplayList(fields)
@@ -490,10 +511,7 @@ class DexterityContentAdapter(FormActionAdapter):
                 IVocabularyFactory,
                 name=u"plone.app.vocabularies.WorkflowTransitions"
             )(self)
-            transitions = [
-                (term.value, u"{0:s} ({1:s})".format(term.title, term.value))
-                for term in vocabulary
-            ]
+            transitions = [(term.value, term.title) for term in vocabulary]
         return atapi.DisplayList(
             [(u"", _(u"No transition"))]
             + sorted(transitions, lambda x, y: cmp(x[1].lower(),
