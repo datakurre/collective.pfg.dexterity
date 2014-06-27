@@ -1,11 +1,16 @@
 Changelog
 =========
 
-0.9.2 (unreleased)
-------------------
+0.10.0 (unreleased)
+-------------------
 
-- Nothing changed yet.
-
+- Display field ids for TTW fields, which do not have translations
+  [Asko Soukka]
+- Add trivial transforms for strings to sets and lists for better
+  vocabulary field support
+  [Asko Soukka]
+- Add error classes to error messages to ease debugging type mismatch errors
+  [Asko Soukka]
 
 0.9.1 (2014-06-27)
 ------------------
