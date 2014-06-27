@@ -4,8 +4,9 @@ Changelog
 0.9.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Fix issue where content deletion fails (after a submission error), because
+  content is not even added to a container yet
+  [Asko Soukka]
 
 0.9.0 (2013-12-15)
 ------------------
