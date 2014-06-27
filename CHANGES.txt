@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.9.1 (unreleased)
+0.9.1 (2014-06-27)
 ------------------
 
 - Fix issue where content deletion fails (after a submission error), because
