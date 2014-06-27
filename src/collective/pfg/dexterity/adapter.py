@@ -376,7 +376,6 @@ class DexterityContentAdapter(FormActionAdapter):
         for field, value in values.values():
             error_msg = self._setAsOwner(context, field, value)
             if error_msg:
-                self._deleteAsOwner(targetFolder, context)
                 return {FORM_ERROR_MARKER: error_msg}
 
         # Add into container
