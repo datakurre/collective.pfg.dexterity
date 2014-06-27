@@ -280,7 +280,7 @@ class DexterityContentAdapter(FormActionAdapter):
                 raise
             except Exception:
                 LOG.error(e)
-                return u"An unexpected error: %s" % e
+                return u"An unexpected error: %s %s" % (e.__class__, e)
 
     @as_owner
     def _doActionAsOwner(self, wftool, context, transition):
@@ -290,13 +290,14 @@ class DexterityContentAdapter(FormActionAdapter):
             raise
         except Exception, e:
             LOG.error(e)
-            return u"An unexpected error: %s" % e
+            return u"An unexpected error: %s %s" % (e.__class__, e)
 
     @as_owner
     def _reindexAsOwner(self, context):
         context.reindexObject()
 
     security.declarePublic("onSuccess")
+
     def onSuccess(self, fields, REQUEST=None):
         createdType = self.getCreatedType()
         targetFolder = self.getTargetFolder()
@@ -340,7 +341,7 @@ class DexterityContentAdapter(FormActionAdapter):
 
             # Convert datetimes to collective.z3cform.date-compatible
             if isinstance(field, Date):
-                value = re.compile("\d+").findall(value[:10]) # YYYY-MM-DD
+                value = re.compile("\d+").findall(value[:10])  # YYYY-MM-DD
 
             # Apply a few controversial convenience heuristics
             if isinstance(field, TextLine) and isinstance(value, unicode):
@@ -370,7 +371,8 @@ class DexterityContentAdapter(FormActionAdapter):
             raise
         except Exception, e:
             LOG.error(e)
-            return {FORM_ERROR_MARKER: u"An unexpected error: %s" % e}
+            return {FORM_ERROR_MARKER: u"An unexpected error: %s %s"
+                    % (e.__class__, e)}
 
         # Set all parsed values for the created content
         for field, value in values.values():
@@ -413,6 +415,7 @@ class DexterityContentAdapter(FormActionAdapter):
         annotations["collective.pfg.dexterity"][self.getId()] = context
 
     security.declarePrivate("listTypes")
+
     def listTypes(self):
         types = getToolByName(self, "portal_types")
         dexterity = [(fti.id, fti.title) for fti in types.values()
@@ -420,17 +423,19 @@ class DexterityContentAdapter(FormActionAdapter):
         return atapi.DisplayList(dexterity)
 
     security.declarePrivate("listFormFields")
+
     def listFormFields(self):
         fields = [(obj.getId(), obj.title_or_id())
-                  for obj in self.aq_parent.objectValues()\
-                          if IPloneFormGenField.providedBy(obj)]
+                  for obj in self.aq_parent.objectValues()
+                  if IPloneFormGenField.providedBy(obj)]
         return atapi.DisplayList(fields)
 
     security.declarePrivate("listOptionalFormFields")
+
     def listOptionalFormFields(self):
         fields = [(obj.getId(), obj.title_or_id())
-                  for obj in self.aq_parent.objectValues()\
-                          if IPloneFormGenField.providedBy(obj)]
+                  for obj in self.aq_parent.objectValues()
+                  if IPloneFormGenField.providedBy(obj)]
         return atapi.DisplayList([(u"", _(u"Don't save"))] + fields)
 
     def _getDexterityFields(self, portal_type):
@@ -448,17 +453,22 @@ class DexterityContentAdapter(FormActionAdapter):
         return self._getDexterityFields(portal_type).get(name, None)
 
     security.declarePrivate("listContentFields")
+
     def listContentFields(self):
         types = getToolByName(self, "portal_types")
         createdType = self.getCreatedType()
         if createdType in types.keys():
             mapping = self._getDexterityFields(createdType)
-            fields = [(key, mapping[key].title) for key in mapping]
+            fields = [
+                (key, u"{0:s} ({1:s})".format(mapping[key].title, key))
+                for key in mapping
+            ]
         else:
             fields = []
         return atapi.DisplayList(fields)
 
     security.declarePrivate("listTransitions")
+
     def listTransitions(self):
         types = getToolByName(self, "portal_types")
         createdType = self.getCreatedType()
@@ -466,21 +476,28 @@ class DexterityContentAdapter(FormActionAdapter):
             workflows = getToolByName(self, "portal_workflow")
             candidates = []
             transitions = []
-            for workflow in [workflows.get(key) for key in\
+            for workflow in [workflows.get(key) for key in
                              workflows.getChainForPortalType(createdType)
                              if key in workflows.keys()]:
                 candidates.extend(
                     workflow.states.get(workflow.initial_state).transitions)
             for transition in set(candidates):
                 transitions.append((transition,
-                    workflows.getTitleForTransitionOnType(
-                        transition, createdType)))
+                                    workflows.getTitleForTransitionOnType(
+                                        transition, createdType)))
         else:
-            vocabulary = getUtility(IVocabularyFactory,
-                name=u"plone.app.vocabularies.WorkflowTransitions")(self)
-            transitions = [(term.value, term.title) for term in vocabulary]
-        return atapi.DisplayList([(u"", _(u"No transition"))]\
-            + sorted(transitions, lambda x, y: cmp(x[1].lower(),\
-                                                   y[1].lower())))
+            vocabulary = getUtility(
+                IVocabularyFactory,
+                name=u"plone.app.vocabularies.WorkflowTransitions"
+            )(self)
+            transitions = [
+                (term.value, u"{0:s} ({1:s})".format(term.title, term.value))
+                for term in vocabulary
+            ]
+        return atapi.DisplayList(
+            [(u"", _(u"No transition"))]
+            + sorted(transitions, lambda x, y: cmp(x[1].lower(),
+                                                   y[1].lower()))
+        )
 
 atapi.registerType(DexterityContentAdapter, PROJECTNAME)
