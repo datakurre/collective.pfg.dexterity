@@ -14,6 +14,7 @@ from zope.component import (
 from zope.schema import (
     TextLine,
     List,
+    Choice,
     Set,
     Datetime,
     Date
@@ -273,6 +274,9 @@ class DexterityContentAdapter(FormActionAdapter):
                 value = set(value)
             elif isinstance(field, List) and isinstance(value, unicode):
                 value = list((value,))
+            elif (isinstance(field, Choice)
+                  and isinstance(value, list) and len(value) == 1):
+                value = value[0]
             return value
 
         # Try to set the value on created object
