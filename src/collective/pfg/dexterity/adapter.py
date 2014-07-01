@@ -352,7 +352,11 @@ class DexterityContentAdapter(FormActionAdapter):
                 value = REQUEST.get(mapping["form"], None)
                 # Convert strings to unicode
                 if isinstance(value, str):
-                    value = unicode(value, site_encoding, errors="replace")
+                    value = unicode(value, site_encoding, "replace")
+                if (isinstance(value, list)
+                        and all([isinstance(v, str) for v in value])):
+                    value = [unicode(v, site_encoding, "replace")
+                             for v in value]
 
             # Convert datetimes to collective.z3cform.datetime-compatible
             if isinstance(field, Datetime):

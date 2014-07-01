@@ -4,8 +4,8 @@ Changelog
 0.10.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
-
+- Add automatic value adaptation from single value list to Choice field
+  [Asko Soukka]
 
 0.10.0 (2014-06-27)
 -------------------
