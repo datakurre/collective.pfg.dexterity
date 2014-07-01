@@ -4,6 +4,8 @@ Changelog
 0.10.1 (unreleased)
 -------------------
 
+- Fix to translate also list with strings to unicode
+  [Asko Soukka]
 - Add automatic value adaptation from single value list to Choice field
   [Asko Soukka]
 
