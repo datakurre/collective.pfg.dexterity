@@ -123,23 +123,20 @@ The form has properly configured 'Content Adapter'
     Click button  form.button.save
 
     # Map form fields to Ticket-content one field at time
-
     Go to  ${PLONE_URL}/send-request/ticket-machine/edit
-    Click link  Add new row
-    Select from list  css=select#form_fieldMapping_new  topic
-    Select from list  css=select#content_fieldMapping_new  title
-    Click button  form.button.save
 
-    Go to  ${PLONE_URL}/send-request/ticket-machine/edit
     Click link  Add new row
-    Select from list  css=select#form_fieldMapping_new  comments
-    Select from list  css=select#content_fieldMapping_new  description
-    Click button  form.button.save
+    Click link  Add new row
+    Click link  Add new row
 
-    Go to  ${PLONE_URL}/send-request/ticket-machine/edit
-    Click link  Add new row
-    Select from list  css=select#form_fieldMapping_new  due-date
-    Select from list  css=select#content_fieldMapping_new  duedate
+    Select from list  css=select#form_fieldMapping_0  topic
+    Select from list  css=select#content_fieldMapping_0  title
+
+    Select from list  css=select#form_fieldMapping_1  comments
+    Select from list  css=select#content_fieldMapping_1  description
+
+    Select from list  css=select#form_fieldMapping_2  due-date
+    Select from list  css=select#content_fieldMapping_2  duedate
 
     # Configure adapter to submit the created content
     Select radio button  workflowTransition  submit
