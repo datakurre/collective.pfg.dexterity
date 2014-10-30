@@ -31,6 +31,9 @@ This product could be used with other known packages to create a more complete
 4. ...
 5. Profit.
 
+Important: If your target folder is Dexterity based folder, don't forget to
+add the IReferencableBehavior to that type in the control panel.
+
 This product may not yet support all of the PloneFormGen's or Dexterity's
 fields. If you like the idea and think this could be useful, please,
 contribute at: https://github.com/datakurre/collective.pfg.dexterity
