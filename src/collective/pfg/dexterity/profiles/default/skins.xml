@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<object name="portal_skins">
+  <object name="DexterityContentAdapter" meta_type="Filesystem Directory View"
+          directory="collective.pfg.dexterity:skins/DexterityContentAdapter"/>
+  <skin-path name="Plone Default">
+    <layer name="DexterityContentAdapter" insert-before="DataGridWidget"/>
+  </skin-path>
+</object>

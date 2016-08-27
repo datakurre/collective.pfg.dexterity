@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """Initialize Archetypes
 """
-
 from collective.pfg.dexterity import config
-
 from Products.Archetypes import atapi
 from Products.CMFCore import utils
+from Products.CMFCore.DirectoryView import registerDirectory
+
+
+registerDirectory('skins', globals())
 
 
 def initialize(context):
@@ -38,7 +40,7 @@ def initialize(context):
 
     for atype, constructor in zip(content_types, constructors):
         utils.ContentInit(
-            "%s: %s" % (config.PROJECTNAME, atype.portal_type),
+            '{0:s}: {1:s}'.format(config.PROJECTNAME, atype.portal_type),
             content_types=(atype,),
             permission=config.ADD_PERMISSIONS[atype.portal_type],
             extra_constructors=(constructor,),

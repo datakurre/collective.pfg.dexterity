@@ -1,12 +1,10 @@
 *** Settings ***
-
-Meta: Id  36107035
-Meta: Title  As a 'Site Administrator' I want to save submissions with date values
-
 Library  OperatingSystem
 
 Resource  plone/app/robotframework/keywords.robot
 Resource  plone/app/robotframework/saucelabs.robot
+
+Resource  ${CMFPLONE_SELECTORS}  # magic variable from p.a.robotframework
 
 Library  Remote  ${PLONE_URL}/RobotRemote
 
@@ -44,10 +42,10 @@ Background
 
 Open Menu
     [Arguments]  ${elementId}
-    Element Should Be Visible  css=dl#${elementId} span
-    Element Should Not Be Visible  css=dl#${elementId} dd.actionMenuContent
-    Click link  css=dl#${elementId} dt.actionMenuHeader a
-    Wait until keyword succeeds  1  5  Element Should Be Visible  css=dl#${elementId} dd.actionMenuContent
+    Element Should Be Visible  css=#${elementId} span
+    Element Should Not Be Visible  css=#${elementId} ${ACTION_MENU_CONTENT}
+    Click link  css=#${elementId} ${ACTION_MENU_HEADER}
+    Wait until keyword succeeds  1  5  Element Should Be Visible  css=#${elementId} ${ACTION_MENU_CONTENT}
 
 Open add new menu
     Open menu  plone-contentmenu-factories
@@ -62,20 +60,34 @@ There's a content type with a date field
     Create type with date field  Ticket
 
 There's a published form with a date field
+    Set window size  1280  1280
     Enable autologin as  Site Administrator
     Go to  ${PLONE_URL}
 
     # Add a new Form FOlder
     Open add new menu
     Click link  css=#plone-contentmenu-factories a#formfolder
+
+    # Work around Archetypes Plone 5 bug
+    ${url} =  Get location
+    Go to  ${url}
+
     Input text  title  Send Request
     Click button  form.button.save
 
     # Delete 'replyto' field (included by default) from the created Form Folder
+    Page should contain   Your E-Mail Address
     Go to  ${PLONE_URL}/send-request/replyto
     Open action menu
     Click link  css=a#plone-contentmenu-actions-delete
-    Click button  Delete
+    Sleep  1s
+    Log source
+    Wait until page contains element  ${MODAL_BUTTONS_DELETE}
+    Click button  ${MODAL_BUTTONS_DELETE}
+    ${status} =  Run keyword and return status
+    ...  Wait until page does not contain  Your E-Mail Address
+    Run keyword if  not ${status}
+    ...  Wait until page contains  Your E-Mail Address has been deleted
     Page should contain  Send Request
 
     # Disable mailer adapter on the form
@@ -94,6 +106,13 @@ There's a published form with a date field
     Open workflow menu
     # Click link  css=a#workflow-transition-publish
     Go to  ${PLONE_URL}/send-request/content_status_modify?workflow_action=publish
+
+    # Pass CSRF protection
+    ${csrf} =  Run keyword and return status
+    ...  Page should contain  Confirming User Action
+    Run keyword if  ${csrf}
+    ...  Click button  Confirm action
+
     Wait until page contains  Item state changed.
 
     Disable autologin
@@ -105,8 +124,8 @@ The form has properly configured 'Content Adapter'
     Go to  ${PLONE_URL}
     Open add new menu
     Click link  css=#plone-contentmenu-factories a#folder
-    Input text  title  Tracker
-    Click button  form.button.save
+    Input text  ${FORM_FIELDS_TITLE}  Tracker
+    Click button  ${FORM_BUTTONS_SAVE}
 
     # Add a new content adapter into the created Form Folder
     Go to  ${PLONE_URL}/send-request
@@ -115,11 +134,11 @@ The form has properly configured 'Content Adapter'
     Input text  title  Ticket machine
 
     # Configure it to created Ticket-types
-    Select radio button  createdType  Ticket
-    Click button  Add...
-    Click link  css=.overlay a[rel='Home']
-    Page should contain element  css=.overlay tr.even input[type='checkbox']
-    Click element  css=.overlay tr.even input[type='checkbox']
+    ${success} =  Run keyword and return status
+    ...  Select radio button  createdType  Ticket
+    Run keyword if  not ${success}
+    ...  Select from list  createdType  Ticket
+    Select target folder
     Click button  form.button.save
 
     # Map form fields to Ticket-content one field at time
@@ -142,7 +161,7 @@ The form has properly configured 'Content Adapter'
     Select radio button  workflowTransition  submit
     Click button  form.button.save
 
-    # Enable content creation magic
+    # Enable content creation magic (requires real owner with enough rights)
     Change ownership  send-request/ticket-machine  admin
 
     Disable autologin
@@ -168,7 +187,10 @@ A content object is created
 It has the date field filled
     Enable autologin as  Site Administrator
     Go to  ${PLONE_URL}/tracker/ticket
-    Element text should be  css=.date-field#form-widgets-duedate  1/1/13
+    ${status} =  Run keyword and return status
+    ...  Element text should be  css=.date-field#form-widgets-duedate  1/1/13
+    Run keyword if  not ${status}
+    ...  Element should contain  css=#formfield-form-widgets-duedate  1/1/13
     Disable autologin
 
 I'm logged in as a '${ROLE}'
@@ -181,5 +203,10 @@ I go to the front page
 I can add a new form folder
     Open add new menu
     Click link  css=#plone-contentmenu-factories a#formfolder
+
+    # Work around Archetypes Plone 5 bug
+    ${url} =  Get location
+    Go to  ${url}
+
     Input text  title  A sample form folder
     Click button  form.button.save
