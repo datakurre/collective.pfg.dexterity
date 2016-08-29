@@ -1,11 +1,15 @@
 Changelog
 =========
 
-0.10.2 (unreleased)
--------------------
+1.0.0-rc1 (unreleased)
+----------------------
 
-- Nothing changed yet.
+- Add support for Plone 5
+  [datakurre]
 
+- Fix field population heuristics to try z3c.form widget adaptation
+  at first and direct assignment only the (previously was the opposite)
+  [datakurre]
 
 0.10.1 (2014-07-01)
 -------------------
