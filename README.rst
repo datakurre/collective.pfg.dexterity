@@ -1,6 +1,9 @@
 Dexterity PFG Adapter
 =====================
 
+.. image:: https://secure.travis-ci.org/datakurre/collective.pfg.dexterity.png
+:target: http://travis-ci.org/datakurre/collective.pfg.dexterity
+
 This product installs a custom PloneFormGen adapter for creating new dexterity
 content objects from PloneFormGen form submissions.
 
@@ -31,19 +34,13 @@ This product could be used with other known packages to create a more complete
 4. ...
 5. Profit.
 
-Important: If your target folder is Dexterity based folder, don't forget to
-add the IReferencableBehavior to that type in the control panel.
-
 This product may not yet support all of the PloneFormGen's or Dexterity's
 fields. If you like the idea and think this could be useful, please,
 contribute at: https://github.com/datakurre/collective.pfg.dexterity
 
+On Plone 4: If your target folder is Dexterity based folder, don't forget to
+add the IReferencableBehavior to that type in the control panel.
+
 P.S. If you find it redundant to first create a PloneFormGen-form and then
 define a similar dexterity content type, check out if `uwosh.pfg.d2c
 <http://pypi.python.org/pypi/uwosh.pfg.d2c>`_ is a better fit for you.
-
-.. image:: https://secure.travis-ci.org/datakurre/collective.pfg.dexterity.png
-       :target: http://travis-ci.org/datakurre/collective.pfg.dexterity
-
-.. image:: https://saucelabs.com/buildstatus/cpfgdexterity
-       :target: https://saucelabs.com/u/cpfgdexterity

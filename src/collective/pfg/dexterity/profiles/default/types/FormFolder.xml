@@ -2,7 +2,7 @@
 <object name="FormFolder"
         meta_type="Factory-based Type Information with dynamic views">
 
-    <property name="allowed_content_types" purge="False">
-        <element value="Dexterity Content Adapter"/>
-    </property>
+  <property name="allowed_content_types" purge="False">
+    <element value="Dexterity Content Adapter"/>
+  </property>
 </object>
