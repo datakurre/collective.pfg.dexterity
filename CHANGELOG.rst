@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0.0-rc1 (unreleased)
-----------------------
+1.0.0rc1 (2016-08-29)
+---------------------
 
 - Add support for Plone 5
   [datakurre]
