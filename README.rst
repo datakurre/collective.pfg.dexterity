@@ -2,7 +2,7 @@ Dexterity PFG Adapter
 =====================
 
 .. image:: https://secure.travis-ci.org/datakurre/collective.pfg.dexterity.png
-:target: http://travis-ci.org/datakurre/collective.pfg.dexterity
+   :target: http://travis-ci.org/datakurre/collective.pfg.dexterity
 
 This product installs a custom PloneFormGen adapter for creating new dexterity
 content objects from PloneFormGen form submissions.
