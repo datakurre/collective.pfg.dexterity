@@ -1,4 +1,4 @@
 graft src/collective
 include *.rst
 global-exclude *.pyc
-exclude .* Makefile* *.nix result
+exclude .* *.sh *.cfg Makefile* *.nix result
